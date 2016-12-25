@@ -1,4 +1,4 @@
-﻿#include <mado/make_error_code.hpp>
+﻿#include <mado/detail/make_error_code.hpp>
 
 #include <Windows.h>
 

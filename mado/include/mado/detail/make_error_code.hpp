@@ -1,5 +1,5 @@
-﻿#ifndef MADO_ERROR_CODE_HPP
-#define MADO_ERROR_CODE_HPP
+﻿#ifndef MADO_DETAIL_ERROR_CODE_HPP
+#define MADO_DETAIL_ERROR_CODE_HPP
 
 #include <system_error>
 

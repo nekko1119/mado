@@ -90,17 +90,19 @@ DEFILE_ENUM_LOGICAL_OPERATOR(window_style)
     {
         std::unordered_set<class_style> class_styles_;
         tstring_view title_ = _T("");
+        WNDPROC procedure_ = ::DefWindowProc;
         std::unordered_set<window_style> window_styles_;
         std::pair<int, int> position_ = {CW_USEDEFAULT, CW_USEDEFAULT};
         std::pair<int, int> size_ = {CW_USEDEFAULT, CW_USEDEFAULT};
         HWND parent_ = nullptr;
 
     public:
-        window_builder& add_class_styles(std::initializer_list<class_style> styles) noexcept;
-        window_builder& remove_class_styles(std::initializer_list<class_style> styles) noexcept;
+        window_builder& add_class_styles(std::initializer_list<class_style> styles);
+        window_builder& remove_class_styles(std::initializer_list<class_style> styles);
+        window_builder& procedure(WNDPROC procedure) noexcept;
         window_builder& title(tstring_view title) noexcept;
-        window_builder& add_window_style(std::initializer_list<window_style> styles) noexcept;
-        window_builder& remove_window_style(std::initializer_list<window_style> styles) noexcept;
+        window_builder& add_window_style(std::initializer_list<window_style> styles);
+        window_builder& remove_window_style(std::initializer_list<window_style> styles);
         window_builder& position(int x, int y) noexcept;
         window_builder& size(int x, int y) noexcept;
         window_builder& parent(HWND parent) noexcept;

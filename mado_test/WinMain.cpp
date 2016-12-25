@@ -1,17 +1,15 @@
-﻿#include <mado/window_builder.hpp>
+﻿#include <mado/application.hpp>
+#include <mado/form.hpp>
 #include <Windows.h>
 #include <codecvt>
 
 int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-    mado::window_builder builder;
-    auto result = builder.build();
-    if (auto const hwnd = std::get_if<HWND>(&result)) {
-        ShowWindow(*hwnd, SW_SHOW);
+    auto result = mado::make_form(mado::window_builder());
+    if (auto form = std::get_if<std::shared_ptr<mado::form>>(&result)) {
+        (*form)->visible();
+        mado::application<mado::blocking>::run(*form);
     } else {
-        auto const message = std::get<0>(result).message();
-        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> conversion;
-        MessageBox(nullptr, conversion.from_bytes(message).data(), _T("hoge"), MB_OK);
+        auto message = std::get<std::error_code>(result).message();
     }
-    MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OK);
     return 0;
 }

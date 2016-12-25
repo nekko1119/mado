@@ -19,17 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\mado\application.hpp" />
     <ClInclude Include="include\mado\config.hpp" />
-    <ClInclude Include="include\mado\make_error_code.hpp" />
+    <ClInclude Include="include\mado\detail\global_window_procedure.hpp" />
+    <ClInclude Include="include\mado\detail\make_error_code.hpp" />
     <ClInclude Include="include\mado\form.hpp" />
     <ClInclude Include="include\mado\utility\random_generator.hpp" />
     <ClInclude Include="include\mado\utility\tstring.hpp" />
+    <ClInclude Include="include\mado\window.hpp" />
     <ClInclude Include="include\mado\window_builder.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\mado\detail\global_window_procedure.cpp" />
     <ClCompile Include="src\mado\form.cpp" />
-    <ClCompile Include="src\mado\make_error_code.cpp" />
+    <ClCompile Include="src\mado\detail\make_error_code.cpp" />
     <ClCompile Include="src\mado\utility\random_generator.cpp" />
+    <ClCompile Include="src\mado\window.cpp" />
     <ClCompile Include="src\mado\window_builder.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

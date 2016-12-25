@@ -1,11 +1,11 @@
 ﻿#include <mado/window_builder.hpp>
 
-#include <mado/make_error_code.hpp>
+#include <mado/detail/make_error_code.hpp>
 #include <mado/utility/random_generator.hpp>
 
 namespace mado
 {
-    window_builder& window_builder::add_class_styles(std::initializer_list<class_style> styles) noexcept
+    window_builder& window_builder::add_class_styles(std::initializer_list<class_style> styles)
     {
         for (auto const& s : styles) {
             class_styles_.emplace(s);
@@ -13,11 +13,17 @@ namespace mado
         return *this;
     }
 
-    window_builder & window_builder::remove_class_styles(std::initializer_list<class_style> styles) noexcept
+    window_builder& window_builder::remove_class_styles(std::initializer_list<class_style> styles)
     {
         for (auto const& s : styles) {
             class_styles_.erase(s);
         }
+        return *this;
+    }
+
+    window_builder& window_builder::procedure(WNDPROC procedure) noexcept
+    {
+        procedure_ = procedure;
         return *this;
     }
 
@@ -27,7 +33,7 @@ namespace mado
         return *this;
     }
 
-    window_builder& window_builder::add_window_style(std::initializer_list<window_style> styles) noexcept
+    window_builder& window_builder::add_window_style(std::initializer_list<window_style> styles)
     {
         for (auto const& s : styles) {
             window_styles_.emplace(s);
@@ -35,7 +41,7 @@ namespace mado
         return *this;
     }
 
-    window_builder& window_builder::remove_window_style(std::initializer_list<window_style> styles) noexcept
+    window_builder& window_builder::remove_window_style(std::initializer_list<window_style> styles)
     {
         for (auto const& s : styles) {
             window_styles_.erase(s);
@@ -83,7 +89,7 @@ namespace mado
         }
         wc.cbSize = sizeof(wc);
         wc.style = class_style;
-        wc.lpfnWndProc = ::DefWindowProc;
+        wc.lpfnWndProc = procedure_;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
         wc.hInstance = ::GetModuleHandle(nullptr);
