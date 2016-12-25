@@ -1,11 +1,12 @@
-﻿#include <mado/window_builder.hpp>
+﻿#include <mado/form_builder.hpp>
 
+#include <mado/detail/global_window_procedure.hpp>
 #include <mado/detail/make_error_code.hpp>
 #include <mado/utility/random_generator.hpp>
 
 namespace mado
 {
-    window_builder& window_builder::add_class_styles(std::initializer_list<class_style> styles)
+    form_builder& form_builder::add_class_styles(std::initializer_list<class_style> styles)
     {
         for (auto const& s : styles) {
             class_styles_.emplace(s);
@@ -13,7 +14,7 @@ namespace mado
         return *this;
     }
 
-    window_builder& window_builder::remove_class_styles(std::initializer_list<class_style> styles)
+    form_builder& form_builder::remove_class_styles(std::initializer_list<class_style> styles)
     {
         for (auto const& s : styles) {
             class_styles_.erase(s);
@@ -21,19 +22,13 @@ namespace mado
         return *this;
     }
 
-    window_builder& window_builder::procedure(WNDPROC procedure) noexcept
-    {
-        procedure_ = procedure;
-        return *this;
-    }
-
-    window_builder& window_builder::title(tstring_view title) noexcept
+    form_builder& form_builder::title(tstring_view title) noexcept
     {
         title_ = std::move(title);
         return *this;
     }
 
-    window_builder& window_builder::add_window_style(std::initializer_list<window_style> styles)
+    form_builder& form_builder::add_window_style(std::initializer_list<window_style> styles)
     {
         for (auto const& s : styles) {
             window_styles_.emplace(s);
@@ -41,7 +36,7 @@ namespace mado
         return *this;
     }
 
-    window_builder& window_builder::remove_window_style(std::initializer_list<window_style> styles)
+    form_builder& form_builder::remove_window_style(std::initializer_list<window_style> styles)
     {
         for (auto const& s : styles) {
             window_styles_.erase(s);
@@ -49,25 +44,25 @@ namespace mado
         return *this;
     }
 
-    window_builder& window_builder::position(int x, int y) noexcept
+    form_builder& form_builder::position(int x, int y) noexcept
     {
         position_ = std::make_pair(x, y);
         return *this;
     }
 
-    window_builder& window_builder::size(int x, int y) noexcept
+    form_builder& form_builder::size(int x, int y) noexcept
     {
         size_ = std::make_pair(x, y);
         return *this;
     }
 
-    window_builder& window_builder::parent(HWND parent) noexcept
+    form_builder& form_builder::parent(HWND parent) noexcept
     {
         parent_ = parent;
         return *this;
     }
 
-    std::variant<std::error_code, HWND> window_builder::build() const
+    std::variant<std::error_code, std::shared_ptr<form>> form_builder::build() const
     {
         WNDCLASSEX wc;
         auto const class_name = generate_random_string(32);
@@ -89,7 +84,7 @@ namespace mado
         }
         wc.cbSize = sizeof(wc);
         wc.style = class_style;
-        wc.lpfnWndProc = procedure_;
+        wc.lpfnWndProc = global_window_procedure;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
         wc.hInstance = ::GetModuleHandle(nullptr);
@@ -99,26 +94,21 @@ namespace mado
         wc.lpszMenuName = nullptr;
         wc.lpszClassName = class_name.data();
         wc.hIconSm = static_cast<HICON>(LoadImage(nullptr, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
-        if (!::RegisterClassEx(&wc)) {
-            return make_error_code();
-        }
-        auto hwnd = ::CreateWindowEx(
-            WS_EX_OVERLAPPEDWINDOW,
-            class_name.data(),
-            title_.data(),
-            WS_OVERLAPPEDWINDOW,
-            position_.first,
-            position_.second,
-            size_.first,
-            size_.second,
-            parent_,
-            nullptr,
-            ::GetModuleHandle(nullptr),
-            nullptr
-        );
-        if (!hwnd) {
-            return make_error_code();
-        }
-        return hwnd;
+
+        CREATESTRUCT cs;
+        cs.dwExStyle = WS_EX_OVERLAPPEDWINDOW;
+        cs.lpszClass = class_name.data();
+        cs.lpszName = title_.data();
+        cs.style = WS_OVERLAPPEDWINDOW;
+        cs.x = position_.first;
+        cs.y = position_.second;
+        cs.cx = size_.first;
+        cs.cy = size_.second;
+        cs.hwndParent = parent_;
+        cs.hMenu = nullptr;
+        cs.hInstance = ::GetModuleHandle(nullptr);
+        cs.lpCreateParams = nullptr;
+
+        return make_form(wc, cs);
     }
 }

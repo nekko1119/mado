@@ -1,24 +1,51 @@
 ﻿#include <mado/form.hpp>
 
-#include <mado/detail/global_window_procedure.hpp>
+#include <mado/utility/random_generator.hpp>
 
 namespace mado
 {
-    std::variant<std::error_code, std::shared_ptr<form>> make_form(window_builder builder)
+    form::form()
+        : window{nullptr}
     {
-        // private コンストラクタ対策で、
-        // 関数内でサブクラスを作りそのサブクラスのshare_ptrオブジェクトを作成する
-        struct sub : form {
-            sub(HWND hwnd) : form{hwnd} {}
-        };
-        builder.procedure(global_window_procedure);
-        auto const built_result = builder.build();
-        if (auto code = std::get_if<std::error_code>(&built_result)) {
-            return *code;
+        auto const class_name = generate_random_string(32);
+        UINT class_style{};
+        for (auto const& cs : class_styles_) {
+            class_style |= cs;
         }
-        auto frm = std::make_shared<sub>(std::get<HWND>(built_result));
-        windows.emplace(frm->hwnd(), std::shared_ptr<window>(frm, static_cast<window*>(frm.get())));
-        return std::dynamic_pointer_cast<form>(frm);
+        DWORD window_style{};
+        for (auto const& ws : window_styles_) {
+            window_style |= ws;
+        }
+        WNDCLASSEX wc;
+        wc.cbSize = sizeof(wc);
+        wc.style = CS_HREDRAW | CS_VREDRAW;
+        wc.lpfnWndProc = global_window_procedure;
+        wc.cbClsExtra = 0;
+        wc.cbWndExtra = 0;
+        wc.hInstance = ::GetModuleHandle(nullptr);
+        wc.hIcon = static_cast<HICON>(::LoadImage(nullptr, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
+        wc.hCursor = static_cast<HCURSOR>(::LoadImage(nullptr, IDC_ARROW, IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
+        wc.hbrBackground = static_cast<HBRUSH>(::GetStockObject(WHITE_BRUSH));
+        wc.lpszMenuName = nullptr;
+        wc.lpszClassName = class_name.data();
+        wc.hIconSm = static_cast<HICON>(LoadImage(nullptr, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
+
+        CREATESTRUCT cs;
+        cs.dwExStyle = WS_EX_OVERLAPPEDWINDOW;
+        cs.lpszClass = class_name.data();
+        cs.lpszName = title_.data();
+        cs.style = WS_OVERLAPPEDWINDOW;
+        cs.x = position_.first;
+        cs.y = position_.second;
+        cs.cx = size_.first;
+        cs.cy = size_.second;
+        cs.hwndParent = parent_;
+        cs.hMenu = nullptr;
+        cs.hInstance = ::GetModuleHandle(nullptr);
+        cs.lpCreateParams = nullptr;
+
+        initialize(wc, cs);
+
     }
 
     form::form(HWND hwnd)
@@ -26,12 +53,42 @@ namespace mado
     {
     }
 
-    void form::visible()
+    form::form(WNDCLASSEX const& wc, CREATESTRUCT const& cs)
+        : window{nullptr}
+    {
+        initialize(wc, cs);
+    }
+
+    void form::initialize(WNDCLASSEX const& wc, CREATESTRUCT const& cs)
+    {
+        if (!::RegisterClassEx(&wc)) {
+            throw make_error_code();
+        }
+        hwnd_ = ::CreateWindowEx(
+            cs.dwExStyle,
+            cs.lpszClass,
+            cs.lpszName,
+            cs.style,
+            cs.x,
+            cs.y,
+            cs.cx,
+            cs.cy,
+            cs.hwndParent,
+            cs.hMenu,
+            cs.hInstance,
+            cs.lpCreateParams
+        );
+        if (!hwnd_) {
+            throw make_error_code();
+        }
+    }
+
+    void form::show()
     {
         ::ShowWindow(hwnd_, SW_SHOW);
     }
 
-    void form::invisible()
+    void form::hide()
     {
         ::ShowWindow(hwnd_, SW_HIDE);
     }
