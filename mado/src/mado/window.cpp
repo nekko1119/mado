@@ -2,9 +2,18 @@
 
 namespace mado
 {
-    LRESULT CALLBACK window::do_procedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+    void window::on_create(std::shared_ptr<window>)
+    {
+    }
+
+    LRESULT CALLBACK window::procedure_impl(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     {
         switch (msg) {
+            case WM_CREATE:
+            {
+                on_create(shared_from_this());
+                return 0L;
+            }
             case WM_DESTROY:
             {
                 ::PostQuitMessage(0);
@@ -19,6 +28,6 @@ namespace mado
 
     LRESULT CALLBACK window::procedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     {
-        return do_procedure(hwnd, msg, wp, lp);
+        return procedure_impl(hwnd, msg, wp, lp);
     }
 }

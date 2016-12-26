@@ -1,6 +1,8 @@
 ﻿#include <mado/form.hpp>
 
 #include <mado/utility/random_generator.hpp>
+#include <functional>
+#include <numeric>
 
 namespace mado
 {
@@ -8,14 +10,9 @@ namespace mado
         : window{nullptr}
     {
         auto const class_name = generate_random_string(32);
-        UINT class_style{};
-        for (auto const& cs : class_styles_) {
-            class_style |= cs;
-        }
-        DWORD window_style{};
-        for (auto const& ws : window_styles_) {
-            window_style |= ws;
-        }
+        auto const class_style = std::accumulate(class_styles_.begin(), class_styles_.end(), UINT{}, std::bit_or<>{});
+        auto const window_style = std::accumulate(window_styles_.begin(), window_styles_.end(), DWORD{}, std::bit_or<>{});
+
         WNDCLASSEX wc;
         wc.cbSize = sizeof(wc);
         wc.style = CS_HREDRAW | CS_VREDRAW;

@@ -1,5 +1,6 @@
 ﻿#include <mado/detail/global_window_procedure.hpp>
 #include <mado/window.hpp>
+#include <utility>
 
 namespace mado
 {

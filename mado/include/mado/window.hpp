@@ -2,13 +2,16 @@
 #define MADO_WINDOW_HPP
 
 #include <Windows.h>
+#include <memory>
 
 namespace mado
 {
     class window
+        : std::enable_shared_from_this<window>
     {
     private:
-        virtual LRESULT CALLBACK do_procedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+        virtual LRESULT CALLBACK procedure_impl(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+        virtual void on_create(std::shared_ptr<window> window);
 
     protected:
         HWND hwnd_ = nullptr;

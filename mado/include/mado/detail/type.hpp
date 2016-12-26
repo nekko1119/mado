@@ -15,6 +15,16 @@ constexpr std::underlying_type_t<type> operator|(type left, type right) noexcept
     return static_cast<std::underlying_type_t<type>>(left) |= right;\
 }\
 \
+constexpr std::underlying_type_t<type> operator|(std::underlying_type_t<type> left, type right) noexcept\
+{\
+    return left |= right;\
+}\
+\
+constexpr std::underlying_type_t<type> operator|(type left, std::underlying_type_t<type> right) noexcept\
+{\
+    return right |= left;\
+}\
+\
 constexpr std::underlying_type_t<type> operator&=(std::underlying_type_t<type> left, type right) noexcept\
 {\
     return left &= static_cast<std::underlying_type_t<type>>(right);\
@@ -23,6 +33,16 @@ constexpr std::underlying_type_t<type> operator&=(std::underlying_type_t<type> l
 constexpr std::underlying_type_t<type> operator&(type left, type right) noexcept\
 {\
     return static_cast<std::underlying_type_t<type>>(left) &= right;\
+}\
+\
+constexpr std::underlying_type_t<type> operator&(std::underlying_type_t<type> left, type right) noexcept\
+{\
+    return left &= right;\
+}\
+\
+constexpr std::underlying_type_t<type> operator&(type left, std::underlying_type_t<type> right) noexcept\
+{\
+    return right &= left;\
 }\
 \
 constexpr std::underlying_type_t<type> operator~(type t) noexcept\

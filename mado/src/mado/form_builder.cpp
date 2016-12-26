@@ -3,6 +3,8 @@
 #include <mado/detail/global_window_procedure.hpp>
 #include <mado/detail/make_error_code.hpp>
 #include <mado/utility/random_generator.hpp>
+#include <functional>
+#include <numeric>
 
 namespace mado
 {
@@ -66,22 +68,12 @@ namespace mado
     {
         WNDCLASSEX wc;
         auto const class_name = generate_random_string(32);
-        UINT class_style{};
-        if (class_styles_.empty()) {
-            class_style = class_style::hredraw | class_style::vredraw;
-        } else {
-            for (auto const& cs : class_styles_) {
-                class_style |= cs;
-            }
-        }
-        DWORD window_style{};
-        if (window_styles_.empty()) {
-            window_style = static_cast<DWORD>(window_style::overlapped_window);
-        } else {
-            for (auto const& ws : window_styles_) {
-                window_style |= ws;
-            }
-        }
+        auto const class_style = class_styles_.empty() ?
+            class_style::hredraw | class_style::vredraw
+            : std::accumulate(class_styles_.begin(), class_styles_.end(), UINT{}, std::bit_or<>{});
+        auto const window_style = window_styles_.empty() ?
+            static_cast<DWORD>(window_style::overlapped_window)
+            : std::accumulate(window_styles_.begin(), window_styles_.end(), DWORD{}, std::bit_or<>{});
         wc.cbSize = sizeof(wc);
         wc.style = class_style;
         wc.lpfnWndProc = global_window_procedure;
