@@ -14,18 +14,17 @@ namespace mado
     LRESULT CALLBACK window::procedure_impl(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     {
         switch (msg) {
-            case WM_CREATE:
-            {
+            case WM_CREATE: {
                 on_create(shared_from_this());
                 return 0L;
             }
-            case WM_DESTROY:
-            {
+            case WM_DESTROY: {
                 ::PostQuitMessage(0);
                 return 0L;
             }
-            default:
+            default: {
                 return ::DefWindowProc(hwnd, msg, wp, lp);
+            }
         }
         // ここには来ない
         return 0L;
