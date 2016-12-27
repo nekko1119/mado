@@ -7,12 +7,8 @@
 namespace mado
 {
     form::form()
-        : window{nullptr}
     {
-        auto const class_name = generate_random_string(32);
-        auto const class_style = std::accumulate(class_styles_.begin(), class_styles_.end(), UINT{}, std::bit_or<>{});
-        auto const window_style = std::accumulate(window_styles_.begin(), window_styles_.end(), DWORD{}, std::bit_or<>{});
-
+        auto const class_name = generate_random_string(32U);
         WNDCLASSEX wc;
         wc.cbSize = sizeof(wc);
         wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -24,59 +20,28 @@ namespace mado
         wc.hCursor = static_cast<HCURSOR>(::LoadImage(nullptr, IDC_ARROW, IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
         wc.hbrBackground = static_cast<HBRUSH>(::GetStockObject(WHITE_BRUSH));
         wc.lpszMenuName = nullptr;
-        wc.lpszClassName = class_name.data();
+        wc.lpszClassName = class_name.c_str();
         wc.hIconSm = static_cast<HICON>(LoadImage(nullptr, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
 
-        CREATESTRUCT cs;
-        cs.dwExStyle = WS_EX_OVERLAPPEDWINDOW;
-        cs.lpszClass = class_name.data();
-        cs.lpszName = title_.data();
-        cs.style = WS_OVERLAPPEDWINDOW;
-        cs.x = position_.first;
-        cs.y = position_.second;
-        cs.cx = size_.first;
-        cs.cy = size_.second;
-        cs.hwndParent = parent_;
-        cs.hMenu = nullptr;
-        cs.hInstance = ::GetModuleHandle(nullptr);
-        cs.lpCreateParams = nullptr;
-
-        initialize(wc, cs);
-
+        initialize(wc);
     }
 
-    form::form(HWND hwnd)
-        : window{hwnd}
+    form::form(WNDCLASSEX const& wc, window_property const& property)
+        : window{property}
     {
+        initialize(wc);
     }
 
-    form::form(WNDCLASSEX const& wc, CREATESTRUCT const& cs)
-        : window{nullptr}
-    {
-        initialize(wc, cs);
-    }
-
-    void form::initialize(WNDCLASSEX const& wc, CREATESTRUCT const& cs)
+    void form::initialize(WNDCLASSEX const& wc)
     {
         if (!::RegisterClassEx(&wc)) {
-            throw make_error_code();
+            throw std::system_error{make_error_code()};
         }
-        hwnd_ = ::CreateWindowEx(
-            cs.dwExStyle,
-            cs.lpszClass,
-            cs.lpszName,
-            cs.style,
-            cs.x,
-            cs.y,
-            cs.cx,
-            cs.cy,
-            cs.hwndParent,
-            cs.hMenu,
-            cs.hInstance,
-            cs.lpCreateParams
-        );
+
+        property_.class_name = wc.lpszClassName;
+        hwnd_ = property_.create();
         if (!hwnd_) {
-            throw make_error_code();
+            throw std::system_error{make_error_code()};
         }
     }
 

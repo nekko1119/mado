@@ -2,6 +2,11 @@
 
 namespace mado
 {
+    window::window(window_property const& property)
+        : property_{property}
+    {
+    }
+
     void window::on_create(std::shared_ptr<window>)
     {
     }

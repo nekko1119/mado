@@ -1,0 +1,51 @@
+﻿#include <mado/detail/type.hpp>
+
+#include <functional>
+#include <numeric>
+
+namespace mado
+{
+    window_property::window_property(tstring_view class_name)
+        : class_name{class_name}
+    {
+    }
+
+    std::unique_ptr<CREATESTRUCT> window_property::to_createstruct() const
+    {
+        auto const window_ex_style = std::accumulate(window_ex_styles.begin(), window_ex_styles.end(), DWORD{}, std::bit_or<>{});
+        auto const window_style = std::accumulate(window_styles.begin(), window_styles.end(), DWORD{}, std::bit_or<>{});
+
+        auto cs = std::make_unique<CREATESTRUCT>();
+        cs->dwExStyle = window_ex_style;
+        cs->lpszClass = class_name.c_str();
+        cs->lpszName = title.c_str();
+        cs->style = window_style;
+        cs->x = position.first;
+        cs->y = position.second;
+        cs->cx = size.first;
+        cs->cy = size.second;
+        cs->hwndParent = parent;
+        cs->hMenu = hmenu;
+        cs->hInstance = hInstance;
+        cs->lpCreateParams = create_params;
+        return cs;
+    }
+    HWND window_property::create() const
+    {
+        auto const cs = to_createstruct();
+        return ::CreateWindowEx(
+            cs->dwExStyle,
+            cs->lpszClass,
+            cs->lpszName,
+            cs->style,
+            cs->x,
+            cs->y,
+            cs->cx,
+            cs->cy,
+            cs->hwndParent,
+            cs->hMenu,
+            cs->hInstance,
+            cs->lpCreateParams
+        );
+    }
+}

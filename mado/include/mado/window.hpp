@@ -1,6 +1,7 @@
 ﻿#ifndef MADO_WINDOW_HPP
 #define MADO_WINDOW_HPP
 
+#include <mado/detail/type.hpp>
 #include <Windows.h>
 #include <memory>
 
@@ -15,7 +16,9 @@ namespace mado
 
     protected:
         HWND hwnd_ = nullptr;
-        constexpr window(HWND hwnd) : hwnd_{hwnd} {}
+        window_property property_;
+        window() = default;
+        explicit window(window_property const& property);
         ~window() = default;
         window(window const&) = delete;
         window& operator=(window const&) = delete;
@@ -24,6 +27,11 @@ namespace mado
         HWND hwnd() const
         {
             return hwnd_;
+        }
+
+        window_property const& property() const
+        {
+            return property_;
         }
 
         LRESULT CALLBACK procedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);

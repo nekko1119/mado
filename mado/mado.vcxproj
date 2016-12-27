@@ -32,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\mado\detail\global_window_procedure.cpp" />
+    <ClCompile Include="src\mado\detail\type.cpp" />
     <ClCompile Include="src\mado\form.cpp" />
     <ClCompile Include="src\mado\detail\make_error_code.cpp" />
     <ClCompile Include="src\mado\utility\random_generator.cpp" />

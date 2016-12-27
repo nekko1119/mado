@@ -61,6 +61,7 @@ namespace mado
         template <typename Form>
         static std::optional<std::error_code> run(std::shared_ptr<Form> main_form)
         {
+            main_form->show();
             return blocking::process();
         }
     };
@@ -74,6 +75,7 @@ namespace mado
         template <typename Form, typename F>
         static void run(std::shared_ptr<Form> main_form, F&& f)
         {
+            main_form->show();
             peeking::process(std::forward<F>(f));
         }
     };

@@ -5,25 +5,14 @@
 #include <mado/detail/type.hpp>
 #include <mado/form.hpp>
 #include <mado/utility/tstring.hpp>
-#include <tchar.h>
-#include <Windows.h>
-#include <memory>
 #include <initializer_list>
-#include <system_error>
-#include <unordered_set>
-#include <utility>
-#include <variant>
 
 namespace mado
 {
     class form_builder
     {
         std::unordered_set<class_style> class_styles_;
-        tstring_view title_ = _T("");
-        std::unordered_set<window_style> window_styles_;
-        std::pair<int, int> position_ = {CW_USEDEFAULT, CW_USEDEFAULT};
-        std::pair<int, int> size_ = {CW_USEDEFAULT, CW_USEDEFAULT};
-        HWND parent_ = nullptr;
+        window_property property_;
 
     public:
         form_builder& add_class_styles(std::initializer_list<class_style> styles);

@@ -6,9 +6,6 @@
 #include <mado/detail/type.hpp>
 #include <mado/utility/tstring.hpp>
 #include <mado/window.hpp>
-#include <tchar.h>
-#include <Windows.h>
-#include <memory>
 #include <unordered_set>
 #include <utility>
 #include <variant>
@@ -18,18 +15,10 @@ namespace mado
     class form
         : public window
     {
-        std::unordered_set<class_style> class_styles_;
-        tstring_view title_ = _T("form");
-        std::unordered_set<window_style> window_styles_;
-        std::pair<int, int> position_ = {CW_USEDEFAULT, CW_USEDEFAULT};
-        std::pair<int, int> size_ = {CW_USEDEFAULT, CW_USEDEFAULT};
-        HWND parent_ = nullptr;
-
         form();
-        explicit form(HWND hwnd);
-        form(WNDCLASSEX const& wc, CREATESTRUCT const& cs);
+        form(WNDCLASSEX const& wc, window_property const& property);
 
-        void initialize(WNDCLASSEX const& wc, CREATESTRUCT const& cs);
+        void initialize(WNDCLASSEX const& wc);
 
     public:
         virtual ~form() = default;
@@ -47,8 +36,7 @@ namespace mado
         // 関数内でサブクラスを作りそのサブクラスのshare_ptrオブジェクトを作成する
         struct sub : form {
             sub() : form{} {}
-            sub(HWND hwnd) : form{hwnd} {}
-            sub(WNDCLASSEX const& wc, CREATESTRUCT const& cs) : form{wc, cs} {}
+            sub(WNDCLASSEX const& wc, window_property const& property) : form{wc, property} {}
         };
         try {
             auto frm = std::make_shared<sub>(std::forward<Args>(args)...);

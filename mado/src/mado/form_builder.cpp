@@ -26,14 +26,14 @@ namespace mado
 
     form_builder& form_builder::title(tstring_view title) noexcept
     {
-        title_ = std::move(title);
+        property_.title = std::move(title);
         return *this;
     }
 
     form_builder& form_builder::add_window_style(std::initializer_list<window_style> styles)
     {
         for (auto const& s : styles) {
-            window_styles_.emplace(s);
+            property_.window_styles.emplace(s);
         }
         return *this;
     }
@@ -41,39 +41,37 @@ namespace mado
     form_builder& form_builder::remove_window_style(std::initializer_list<window_style> styles)
     {
         for (auto const& s : styles) {
-            window_styles_.erase(s);
+            property_.window_styles.erase(s);
         }
         return *this;
     }
 
     form_builder& form_builder::position(int x, int y) noexcept
     {
-        position_ = std::make_pair(x, y);
+        property_.position = std::make_pair(x, y);
         return *this;
     }
 
     form_builder& form_builder::size(int x, int y) noexcept
     {
-        size_ = std::make_pair(x, y);
+        property_.size = std::make_pair(x, y);
         return *this;
     }
 
     form_builder& form_builder::parent(HWND parent) noexcept
     {
-        parent_ = parent;
+        property_.parent = parent;
         return *this;
     }
 
     std::variant<std::error_code, std::shared_ptr<form>> form_builder::build() const
     {
-        WNDCLASSEX wc;
-        auto const class_name = generate_random_string(32);
         auto const class_style = class_styles_.empty() ?
             class_style::hredraw | class_style::vredraw
             : std::accumulate(class_styles_.begin(), class_styles_.end(), UINT{}, std::bit_or<>{});
-        auto const window_style = window_styles_.empty() ?
-            static_cast<DWORD>(window_style::overlapped_window)
-            : std::accumulate(window_styles_.begin(), window_styles_.end(), DWORD{}, std::bit_or<>{});
+
+        auto const class_name = generate_random_string(32U);
+        WNDCLASSEX wc;
         wc.cbSize = sizeof(wc);
         wc.style = class_style;
         wc.lpfnWndProc = global_window_procedure;
@@ -84,23 +82,8 @@ namespace mado
         wc.hCursor = static_cast<HCURSOR>(::LoadImage(nullptr, IDC_ARROW, IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
         wc.hbrBackground = static_cast<HBRUSH>(::GetStockObject(WHITE_BRUSH));
         wc.lpszMenuName = nullptr;
-        wc.lpszClassName = class_name.data();
+        wc.lpszClassName = class_name.c_str();
         wc.hIconSm = static_cast<HICON>(LoadImage(nullptr, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
-
-        CREATESTRUCT cs;
-        cs.dwExStyle = WS_EX_OVERLAPPEDWINDOW;
-        cs.lpszClass = class_name.data();
-        cs.lpszName = title_.data();
-        cs.style = WS_OVERLAPPEDWINDOW;
-        cs.x = position_.first;
-        cs.y = position_.second;
-        cs.cx = size_.first;
-        cs.cy = size_.second;
-        cs.hwndParent = parent_;
-        cs.hMenu = nullptr;
-        cs.hInstance = ::GetModuleHandle(nullptr);
-        cs.lpCreateParams = nullptr;
-
-        return make_form(wc, cs);
+        return make_form(wc, property_);
     }
 }
