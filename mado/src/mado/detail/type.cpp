@@ -1,5 +1,6 @@
 ﻿#include <mado/detail/type.hpp>
 
+#include <mado/window.hpp>
 #include <functional>
 #include <numeric>
 

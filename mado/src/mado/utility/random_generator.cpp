@@ -5,7 +5,11 @@
 
 namespace
 {
-    mado::tstring_view string_set = _T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+// コンパイラの未熟な実装により出る警告を抑止する
+#pragma warning(push)
+#pragma warning(disable: 4592)
+    mado::tstring_view const string_set = _T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+#pragma warning(pop)
 }
 
 namespace mado

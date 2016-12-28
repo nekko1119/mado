@@ -1,10 +1,22 @@
 ﻿#include <mado/form_builder.hpp>
 
-#include <mado/detail/global_window_procedure.hpp>
 #include <mado/detail/make_error_code.hpp>
 #include <mado/utility/random_generator.hpp>
 #include <functional>
 #include <numeric>
+
+namespace
+{
+    struct visitor {
+        void operator()(std::shared_ptr<mado::form> f) const {
+            f->create();
+        }
+        template <typename Other>
+        void operator()(Other&&) const {
+            // 何もしない
+        }
+    };
+}
 
 namespace mado
 {
@@ -74,7 +86,7 @@ namespace mado
         WNDCLASSEX wc;
         wc.cbSize = sizeof(wc);
         wc.style = class_style;
-        wc.lpfnWndProc = global_window_procedure;
+        wc.lpfnWndProc = window::window_procedure;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
         wc.hInstance = ::GetModuleHandle(nullptr);
@@ -84,6 +96,9 @@ namespace mado
         wc.lpszMenuName = nullptr;
         wc.lpszClassName = class_name.c_str();
         wc.hIconSm = static_cast<HICON>(LoadImage(nullptr, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
-        return make_form(wc, property_);
+        auto form = make_form<class form>(wc, property_);
+
+        std::visit(visitor{}, form);
+        return form;
     }
 }
