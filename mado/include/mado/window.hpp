@@ -16,7 +16,7 @@ namespace mado
     {
     public:
         using create_handler_type = std::function<bool(std::shared_ptr<T>)>;
-
+        using close_handler_type = std::function<bool(std::shared_ptr<T>)>;
         static LRESULT CALLBACK window_procedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         {
             T* wnd = nullptr;
@@ -36,6 +36,7 @@ namespace mado
 
     private:
         std::vector<create_handler_type> create_handlers_;
+        std::vector<close_handler_type> close_handlers_;
 
     protected:
         HWND hwnd_ = nullptr;
@@ -74,16 +75,21 @@ namespace mado
             return property_;
         }
 
-        void add_create_handler(create_handler_type const handler)
+        void add_create_handler(create_handler_type const& handler)
         {
             create_handlers_.emplace_back(handler);
         }
 
+        void add_close_handler(close_handler_type const& handler)
+        {
+            close_handlers_.emplace_back(handler);
+        }
+
         LRESULT procedure(UINT msg, WPARAM wp, LPARAM lp)
         {
+            auto wnd = std::static_pointer_cast<T>(shared_from_this());
             switch (msg) {
                 case WM_CREATE: {
-                    auto wnd = std::static_pointer_cast<T>(shared_from_this());
                     auto const pred = [&wnd](create_handler_type const& handler) {
                         return handler(wnd);
                     };
@@ -92,6 +98,16 @@ namespace mado
                         rejected_create = true;
                     }
                     return all ? 0L : -1L;
+                }
+                case WM_CLOSE: {
+                    auto const pred = [&wnd](close_handler_type const& handler) {
+                        return handler(wnd);
+                    };
+                    auto const all = std::all_of(close_handlers_.begin(), close_handlers_.end(), pred);
+                    if (all) {
+                        ::DestroyWindow(hwnd_);
+                    }
+                    return 0L;
                 }
                 case WM_DESTROY: {
                     ::PostQuitMessage(0);
