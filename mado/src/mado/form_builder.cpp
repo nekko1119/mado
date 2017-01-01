@@ -86,7 +86,7 @@ namespace mado
         WNDCLASSEX wc;
         wc.cbSize = sizeof(wc);
         wc.style = class_style;
-        wc.lpfnWndProc = window::window_procedure;
+        wc.lpfnWndProc = window<form>::window_procedure;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
         wc.hInstance = ::GetModuleHandle(nullptr);
@@ -96,7 +96,7 @@ namespace mado
         wc.lpszMenuName = nullptr;
         wc.lpszClassName = class_name.c_str();
         wc.hIconSm = static_cast<HICON>(LoadImage(nullptr, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
-        auto form = make_form<class form>(wc, property_);
+        auto form = make_form(wc, property_);
 
         std::visit(visitor{}, form);
         return form;

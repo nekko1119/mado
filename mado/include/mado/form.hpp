@@ -12,7 +12,7 @@
 namespace mado
 {
     class form
-        : public window
+        : public window<form>
     {
         WNDCLASSEX wc_;
 
@@ -30,13 +30,15 @@ namespace mado
         friend std::variant<std::error_code, std::shared_ptr<form>> make_form(Args&&... args);
     };
 
-    template <typename Form, typename ...Args>
+    template <typename ...Args>
     std::variant<std::error_code, std::shared_ptr<form>> make_form(Args&&... args)
     {
         try {
-            // privateなコンストラクタを持ち、かつformは継承されうるためmake_sharedは使えない
-            auto form = std::shared_ptr<Form>(new Form(std::forward<Args>(args)...));
-            form->create();
+            struct sub : public form {
+                sub() : form{} {}
+                sub(WNDCLASSEX const& wc, window_property const& property) : form{wc, property} {}
+            };
+            auto form = std::make_shared<sub>(std::forward<Args>(args)...);
             return std::static_pointer_cast<class form>(form);
         } catch (std::system_error const& ec) {
             return ec.code();

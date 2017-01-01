@@ -36,6 +36,9 @@ namespace mado
 
         property_.create_params = this;
         hwnd_ = property_.create();
+        if (rejected_create) {
+            return;
+        }
         if (!hwnd_) {
             throw std::system_error{make_error_code()};
         }
