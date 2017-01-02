@@ -76,6 +76,26 @@ namespace mado
             return property_;
         }
 
+        void show() const
+        {
+            ::ShowWindow(hwnd_, SW_SHOW);
+        }
+
+        void hide() const
+        {
+            ::ShowWindow(hwnd_, SW_HIDE);
+        }
+
+        bool is_visible() const
+        {
+            return ::IsWindowVisible(hwnd_);
+        }
+
+        void title(tstring_view title) const
+        {
+            ::SetWindowText(hwnd_, title.data());
+        }
+
         void add_create_handler(create_handler_type const& handler)
         {
             create_handler_ = handler;

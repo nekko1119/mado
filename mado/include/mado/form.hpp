@@ -23,8 +23,6 @@ namespace mado
     public:
         virtual ~form() = default;
         void create();
-        void show();
-        void hide();
 
         template <typename Form, typename ...Args>
         friend std::variant<std::error_code, std::shared_ptr<form>> make_form(Args&&... args);

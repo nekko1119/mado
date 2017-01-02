@@ -43,14 +43,4 @@ namespace mado
             throw std::system_error{make_error_code()};
         }
     }
-
-    void form::show()
-    {
-        ::ShowWindow(hwnd_, SW_SHOW);
-    }
-
-    void form::hide()
-    {
-        ::ShowWindow(hwnd_, SW_HIDE);
-    }
 }
