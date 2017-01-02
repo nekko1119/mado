@@ -3,10 +3,8 @@
 
 #include <mado/detail/type.hpp>
 #include <Windows.h>
-#include <algorithm>
 #include <functional>
 #include <memory>
-#include <vector>
 
 namespace mado
 {
@@ -17,6 +15,7 @@ namespace mado
     public:
         using create_handler_type = std::function<bool(std::shared_ptr<T>)>;
         using close_handler_type = std::function<bool(std::shared_ptr<T>)>;
+
         static LRESULT CALLBACK window_procedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         {
             T* wnd = nullptr;
@@ -35,8 +34,10 @@ namespace mado
         }
 
     private:
-        std::vector<create_handler_type> create_handlers_;
-        std::vector<close_handler_type> close_handlers_;
+        static bool default_callback(std::shared_ptr<T>) { return true; }
+
+        create_handler_type create_handler_ = default_callback;
+        close_handler_type close_handler_ = default_callback;
 
     protected:
         HWND hwnd_ = nullptr;
@@ -77,12 +78,12 @@ namespace mado
 
         void add_create_handler(create_handler_type const& handler)
         {
-            create_handlers_.emplace_back(handler);
+            create_handler_ = handler;
         }
 
         void add_close_handler(close_handler_type const& handler)
         {
-            close_handlers_.emplace_back(handler);
+            close_handler_ = handler;
         }
 
         LRESULT procedure(UINT msg, WPARAM wp, LPARAM lp)
@@ -90,21 +91,15 @@ namespace mado
             auto wnd = std::static_pointer_cast<T>(shared_from_this());
             switch (msg) {
                 case WM_CREATE: {
-                    auto const pred = [&wnd](create_handler_type const& handler) {
-                        return handler(wnd);
-                    };
-                    auto const all = std::all_of(create_handlers_.begin(), create_handlers_.end(), pred);
-                    if (!all) {
+                    auto const created = create_handler_(wnd);
+                    if (!created) {
                         rejected_create = true;
                     }
-                    return all ? 0L : -1L;
+                    return created ? 0L : -1L;
                 }
                 case WM_CLOSE: {
-                    auto const pred = [&wnd](close_handler_type const& handler) {
-                        return handler(wnd);
-                    };
-                    auto const all = std::all_of(close_handlers_.begin(), close_handlers_.end(), pred);
-                    if (all) {
+                    auto const closed = close_handler_(wnd);
+                    if (closed) {
                         ::DestroyWindow(hwnd_);
                     }
                     return 0L;
