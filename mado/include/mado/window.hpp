@@ -77,7 +77,7 @@ namespace mado
             return property_;
         }
 
-        void show() const
+        void show()
         {
             if (!created) {
                 property_.window_style |= WS_VISIBLE;
@@ -85,7 +85,7 @@ namespace mado
             ::ShowWindow(hwnd_, SW_SHOW);
         }
 
-        void hide() const
+        void hide()
         {
             if (!created) {
                 property_.window_style &= ~WS_VISIBLE;
