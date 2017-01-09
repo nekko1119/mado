@@ -5,56 +5,24 @@
 #include <functional>
 #include <numeric>
 
-namespace
-{
-    struct visitor {
-        void operator()(std::shared_ptr<mado::form> f) const {
-            f->create();
-        }
-        template <typename Other>
-        void operator()(Other&&) const {
-            // 何もしない
-        }
-    };
-}
-
 namespace mado
 {
-    form_builder& form_builder::add_class_styles(std::initializer_list<class_style> styles)
+    namespace
     {
-        for (auto const& s : styles) {
-            class_styles_.emplace(s);
-        }
-        return *this;
-    }
-
-    form_builder& form_builder::remove_class_styles(std::initializer_list<class_style> styles)
-    {
-        for (auto const& s : styles) {
-            class_styles_.erase(s);
-        }
-        return *this;
+        struct visitor {
+            void operator()(std::shared_ptr<form> f) const {
+                f->create();
+            }
+            template <typename Other>
+            void operator()(Other&&) const {
+                // 何もしない
+            }
+        };
     }
 
     form_builder& form_builder::title(tstring_view title) noexcept
     {
         property_.title = std::move(title);
-        return *this;
-    }
-
-    form_builder& form_builder::add_window_style(std::initializer_list<window_style> styles)
-    {
-        for (auto const& s : styles) {
-            property_.window_styles.emplace(s);
-        }
-        return *this;
-    }
-
-    form_builder& form_builder::remove_window_style(std::initializer_list<window_style> styles)
-    {
-        for (auto const& s : styles) {
-            property_.window_styles.erase(s);
-        }
         return *this;
     }
 
@@ -78,14 +46,10 @@ namespace mado
 
     std::variant<std::error_code, std::shared_ptr<form>> form_builder::build() const
     {
-        auto const class_style = class_styles_.empty() ?
-            class_style::hredraw | class_style::vredraw
-            : std::accumulate(class_styles_.begin(), class_styles_.end(), UINT{}, std::bit_or<>{});
-
         auto const class_name = generate_random_string(32U);
         WNDCLASSEX wc;
         wc.cbSize = sizeof(wc);
-        wc.style = class_style;
+        wc.style = CS_HREDRAW | CS_VREDRAW;
         wc.lpfnWndProc = window<form>::window_procedure;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;

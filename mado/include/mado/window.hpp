@@ -1,7 +1,7 @@
 ﻿#ifndef MADO_WINDOW_HPP
 #define MADO_WINDOW_HPP
 
-#include <mado/detail/type.hpp>
+#include <mado/detail/window_property.hpp>
 #include <Windows.h>
 #include <functional>
 #include <memory>

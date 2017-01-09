@@ -5,19 +5,24 @@ struct main_form
 {
     void operator()(std::shared_ptr<mado::form> form) const
     {
-        form->add_create_handler([](std::shared_ptr<mado::form>) {
-            MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OK);
-            return true;
-        });
-        form->add_close_handler([](std::shared_ptr<mado::form>) {
-            return MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OKCANCEL) == IDOK;
-        });
-        form->create();
-        form->show();
-        if (form->is_visible()) {
-            form->title(_T("oh my god"));
+        try {
+            form->add_create_handler([](std::shared_ptr<mado::form>) {
+                MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OK);
+                return true;
+            });
+            form->add_close_handler([](std::shared_ptr<mado::form>) {
+                return MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OKCANCEL) == IDOK;
+            });
+            form->create();
+            form->show();
+            if (form->is_visible()) {
+                form->title(_T("oh my god"));
+            }
+            mado::application<mado::blocking>::run(form);
+        } catch (std::exception const& e) {
+            auto message = e.what();
+            (void)message;
         }
-        mado::application<mado::blocking>::run(form);
     }
 
     void operator()(std::error_code code) const

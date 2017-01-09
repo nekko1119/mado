@@ -1,8 +1,7 @@
-﻿#include <mado/detail/type.hpp>
+﻿#include <mado/detail/window_property.hpp>
 
 #include <mado/window.hpp>
 #include <functional>
-#include <numeric>
 
 namespace mado
 {
@@ -13,14 +12,11 @@ namespace mado
 
     std::unique_ptr<CREATESTRUCT> window_property::to_createstruct() const
     {
-        auto const window_ex_style = std::accumulate(window_ex_styles.begin(), window_ex_styles.end(), DWORD{}, std::bit_or<>{});
-        auto const window_style = std::accumulate(window_styles.begin(), window_styles.end(), DWORD{}, std::bit_or<>{});
-
         auto cs = std::make_unique<CREATESTRUCT>();
-        cs->dwExStyle = window_ex_style;
+        cs->dwExStyle = WS_EX_OVERLAPPEDWINDOW;
         cs->lpszClass = class_name.c_str();
         cs->lpszName = title.c_str();
-        cs->style = window_style;
+        cs->style = WS_OVERLAPPEDWINDOW;
         cs->x = position.first;
         cs->y = position.second;
         cs->cx = size.first;

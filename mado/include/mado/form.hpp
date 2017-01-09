@@ -2,7 +2,7 @@
 #define MADO_FORM_HPP
 
 #include <mado/detail/make_error_code.hpp>
-#include <mado/detail/type.hpp>
+#include <mado/detail/window_property.hpp>
 #include <mado/utility/tstring.hpp>
 #include <mado/window.hpp>
 #include <unordered_set>
