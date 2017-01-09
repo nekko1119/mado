@@ -13,6 +13,7 @@ namespace mado
     {
         tstring class_name;
         tstring title;
+        DWORD window_style = WS_OVERLAPPEDWINDOW;
         std::pair<int, int> position = {CW_USEDEFAULT, CW_USEDEFAULT};
         std::pair<int, int> size = {CW_USEDEFAULT, CW_USEDEFAULT};
         HWND parent = nullptr;

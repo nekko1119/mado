@@ -30,17 +30,63 @@ namespace mado
 
     void form::create()
     {
+        if (created) {
+            return;
+        }
         if (!::RegisterClassEx(&wc_)) {
             throw std::system_error{make_error_code()};
         }
-
         property_.create_params = this;
         hwnd_ = property_.create();
-        if (rejected_create) {
+        if (rejected_creation) {
             return;
         }
         if (!hwnd_) {
             throw std::system_error{make_error_code()};
         }
+    }
+
+    void form::enable_maximizebox()
+    {
+        if (!created) {
+            property_.window_style |= WS_MAXIMIZEBOX;
+        }
+        auto const style = ::GetWindowLongPtr(hwnd_, GWL_STYLE);
+        if (style == 0UL) {
+            throw std::system_error{make_error_code()};
+        }
+        ::SetLastError(0UL);
+        ::SetWindowLongPtr(hwnd_, GWL_STYLE, style | WS_MAXIMIZEBOX);
+        if (::GetLastError() != 0UL) {
+            throw std::system_error{make_error_code()};
+        }
+    }
+
+    void form::disable_maximizebox()
+    {
+        if (!created) {
+            property_.window_style &= ~WS_MAXIMIZEBOX;
+        }
+        auto const style = ::GetWindowLongPtr(hwnd_, GWL_STYLE);
+        if (style == 0UL) {
+            throw std::system_error{make_error_code()};
+        }
+        ::SetLastError(0UL);
+        ::SetWindowLongPtr(hwnd_, GWL_STYLE, style & ~WS_MAXIMIZEBOX);
+        if (::GetLastError() != 0UL) {
+            throw std::system_error{make_error_code()};
+        }
+    }
+
+    bool form::is_enabled_maximizebox() const
+    {
+        if (!created) {
+            return property_.window_style & WS_MAXIMIZEBOX;
+        }
+        auto const style = ::GetWindowLongPtr(hwnd_, GWL_STYLE);
+        if (style == 0UL) {
+            throw std::system_error{make_error_code()};
+        }
+        return style & WS_MAXIMIZEBOX;
     }
 }

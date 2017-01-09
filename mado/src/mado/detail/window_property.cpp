@@ -16,7 +16,7 @@ namespace mado
         cs->dwExStyle = WS_EX_OVERLAPPEDWINDOW;
         cs->lpszClass = class_name.c_str();
         cs->lpszName = title.c_str();
-        cs->style = WS_OVERLAPPEDWINDOW;
+        cs->style = window_style;
         cs->x = position.first;
         cs->y = position.second;
         cs->cx = size.first;

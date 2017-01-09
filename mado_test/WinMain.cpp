@@ -13,11 +13,9 @@ struct main_form
             form->add_close_handler([](std::shared_ptr<mado::form>) {
                 return MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OKCANCEL) == IDOK;
             });
+            form->title(_T("fofofofof"));
             form->create();
             form->show();
-            if (form->is_visible()) {
-                form->title(_T("oh my god"));
-            }
             mado::application<mado::blocking>::run(form);
         } catch (std::exception const& e) {
             auto message = e.what();

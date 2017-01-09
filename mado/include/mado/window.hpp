@@ -43,7 +43,8 @@ namespace mado
         HWND hwnd_ = nullptr;
         tstring class_name_;
         window_property property_;
-        bool rejected_create = false;
+        bool rejected_creation = false;
+        bool created = false;
 
         explicit window(tstring_view class_name)
             : window{class_name, {}}
@@ -78,21 +79,33 @@ namespace mado
 
         void show() const
         {
+            if (!created) {
+                property_.window_style |= WS_VISIBLE;
+            }
             ::ShowWindow(hwnd_, SW_SHOW);
         }
 
         void hide() const
         {
+            if (!created) {
+                property_.window_style &= ~WS_VISIBLE;
+            }
             ::ShowWindow(hwnd_, SW_HIDE);
         }
 
         bool is_visible() const
         {
+            if (!created) {
+                return porperty_.style & WS_VISIBLE;
+            }
             return ::IsWindowVisible(hwnd_);
         }
 
-        void title(tstring_view title) const
+        void title(tstring_view title)
         {
+            if (!created) {
+                property_.title = title.data();
+            }
             ::SetWindowText(hwnd_, title.data());
         }
 
@@ -111,10 +124,8 @@ namespace mado
             auto wnd = std::static_pointer_cast<T>(shared_from_this());
             switch (msg) {
                 case WM_CREATE: {
-                    auto const created = create_handler_(wnd);
-                    if (!created) {
-                        rejected_create = true;
-                    }
+                    created = create_handler_(wnd);
+                    rejected_creation = !created;
                     return created ? 0L : -1L;
                 }
                 case WM_CLOSE: {
