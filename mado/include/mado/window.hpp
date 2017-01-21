@@ -39,6 +39,30 @@ namespace mado
         create_handler_type create_handler_ = default_callback;
         close_handler_type close_handler_ = default_callback;
 
+        LRESULT procedure(UINT msg, WPARAM wp, LPARAM lp)
+        {
+            auto wnd = std::static_pointer_cast<T>(shared_from_this());
+            switch (msg) {
+                case WM_CREATE: {
+                    created = create_handler_(wnd);
+                    rejected_creation = !created;
+                    return created ? 0L : -1L;
+                }
+                case WM_CLOSE: {
+                    auto const closed = close_handler_(wnd);
+                    if (closed) {
+                        ::DestroyWindow(hwnd_);
+                    }
+                    return 0L;
+                }
+                case WM_DESTROY: {
+                    ::PostQuitMessage(0);
+                    return 0L;
+                }
+            }
+            return ::DefWindowProc(hwnd_, msg, wp, lp);
+        }
+
     protected:
         HWND hwnd_ = nullptr;
         tstring class_name_;
@@ -117,30 +141,6 @@ namespace mado
         void add_close_handler(close_handler_type const& handler)
         {
             close_handler_ = handler;
-        }
-
-        LRESULT procedure(UINT msg, WPARAM wp, LPARAM lp)
-        {
-            auto wnd = std::static_pointer_cast<T>(shared_from_this());
-            switch (msg) {
-                case WM_CREATE: {
-                    created = create_handler_(wnd);
-                    rejected_creation = !created;
-                    return created ? 0L : -1L;
-                }
-                case WM_CLOSE: {
-                    auto const closed = close_handler_(wnd);
-                    if (closed) {
-                        ::DestroyWindow(hwnd_);
-                    }
-                    return 0L;
-                }
-                case WM_DESTROY: {
-                    ::PostQuitMessage(0);
-                    return 0L;
-                }
-            }
-            return ::DefWindowProc(hwnd_, msg, wp, lp);
         }
     };
 }
