@@ -50,6 +50,7 @@ namespace mado
     {
         if (!created) {
             property_.window_style |= WS_MAXIMIZEBOX;
+            return;
         }
         auto const style = ::GetWindowLongPtr(hwnd_, GWL_STYLE);
         if (style == 0UL) {
@@ -66,6 +67,7 @@ namespace mado
     {
         if (!created) {
             property_.window_style &= ~WS_MAXIMIZEBOX;
+            return;
         }
         auto const style = ::GetWindowLongPtr(hwnd_, GWL_STYLE);
         if (style == 0UL) {
