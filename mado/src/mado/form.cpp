@@ -30,7 +30,7 @@ namespace mado
 
     void form::create()
     {
-        if (created) {
+        if (created_) {
             return;
         }
         if (!::RegisterClassEx(&wc_)) {
@@ -38,7 +38,7 @@ namespace mado
         }
         property_.create_params = this;
         hwnd_ = property_.create();
-        if (rejected_creation) {
+        if (rejected_creation_) {
             return;
         }
         if (!hwnd_) {
@@ -48,7 +48,7 @@ namespace mado
 
     void form::enable_maximizebox()
     {
-        if (!created) {
+        if (!created_) {
             property_.window_style |= WS_MAXIMIZEBOX;
             return;
         }
@@ -65,7 +65,7 @@ namespace mado
 
     void form::disable_maximizebox()
     {
-        if (!created) {
+        if (!created_) {
             property_.window_style &= ~WS_MAXIMIZEBOX;
             return;
         }
@@ -82,7 +82,7 @@ namespace mado
 
     bool form::is_enabled_maximizebox() const
     {
-        if (!created) {
+        if (!created_) {
             return property_.window_style & WS_MAXIMIZEBOX;
         }
         auto const style = ::GetWindowLongPtr(hwnd_, GWL_STYLE);

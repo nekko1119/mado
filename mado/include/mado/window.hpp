@@ -44,9 +44,9 @@ namespace mado
             auto wnd = std::static_pointer_cast<T>(shared_from_this());
             switch (msg) {
                 case WM_CREATE: {
-                    created = create_handler_(wnd);
-                    rejected_creation = !created;
-                    return created ? 0L : -1L;
+                    created_ = create_handler_(wnd);
+                    rejected_creation_ = !created_;
+                    return created_ ? 0L : -1L;
                 }
                 case WM_CLOSE: {
                     auto const closed = close_handler_(wnd);
@@ -67,8 +67,8 @@ namespace mado
         HWND hwnd_ = nullptr;
         tstring class_name_;
         window_property property_;
-        bool rejected_creation = false;
-        bool created = false;
+        bool rejected_creation_ = false;
+        bool created_ = false;
 
         explicit window(tstring_view class_name)
             : window{class_name, {}}
@@ -101,9 +101,14 @@ namespace mado
             return property_;
         }
 
+        bool is_created() const
+        {
+            return created_;
+        }
+
         void show()
         {
-            if (!created) {
+            if (!created_) {
                 property_.window_style |= WS_VISIBLE;
             }
             ::ShowWindow(hwnd_, SW_SHOW);
@@ -111,7 +116,7 @@ namespace mado
 
         void hide()
         {
-            if (!created) {
+            if (!created_) {
                 property_.window_style &= ~WS_VISIBLE;
             }
             ::ShowWindow(hwnd_, SW_HIDE);
@@ -119,15 +124,15 @@ namespace mado
 
         bool is_visible() const
         {
-            if (!created) {
-                return porperty_.style & WS_VISIBLE;
+            if (!created_) {
+                return property_.style & WS_VISIBLE;
             }
             return ::IsWindowVisible(hwnd_);
         }
 
         void title(tstring_view title)
         {
-            if (!created) {
+            if (!created_) {
                 property_.title = title.data();
             }
             ::SetWindowText(hwnd_, title.data());
