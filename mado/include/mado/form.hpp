@@ -16,6 +16,9 @@ namespace mado
     {
         WNDCLASSEX wc_;
 
+        void enable_window_style(LONG style);
+        void disable_window_style(LONG style);
+
     protected:
         form();
         form(WNDCLASSEX const& wc, window_property const& property);

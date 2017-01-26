@@ -2,10 +2,43 @@
 
 #include <mado/utility/random_generator.hpp>
 #include <functional>
-#include <numeric>
+#include <utility>
 
 namespace mado
 {
+    namespace
+    {
+        template <typename StyleSetter, typename Op>
+        void toggle_window_style(form const& form, LONG style, StyleSetter&& setter, Op&& op)
+        {
+            if (!form.is_created()) {
+                setter(style);
+                return;
+            }
+            auto const current_style = ::GetWindowLongPtr(form.hwnd(), GWL_STYLE);
+            if (current_style == 0UL) {
+                throw std::system_error{make_error_code()};
+            }
+            ::SetLastError(0UL);
+            ::SetWindowLongPtr(form.hwnd(), GWL_STYLE, std::forward<Op>(op)(current_style, style));
+            if (::GetLastError() != 0UL) {
+                throw std::system_error{make_error_code()};
+            }
+        }
+
+        template <typename StyleSetter>
+        void enable_window_style(form const& form, LONG style, StyleSetter&& setter)
+        {
+            toggle_window_style(form, style, std::forward<StyleSetter>(setter), std::bit_or<>{});
+        }
+
+        template <typename StyleSetter>
+        void disable_window_style(form const& form, LONG style, StyleSetter&& setter)
+        {
+            toggle_window_style(form, style, std::forward<StyleSetter>(setter), std::bit_and<>{});
+        }
+    }
+
     form::form()
         : window{generate_random_string(32U)}
     {
@@ -28,6 +61,16 @@ namespace mado
     {
     }
 
+    void form::enable_window_style(LONG style)
+    {
+        mado::enable_window_style(*this, style, [this](LONG style) { property_.window_style |= style; });
+    }
+
+    void form::disable_window_style(LONG style)
+    {
+        mado::disable_window_style(*this, ~style, [this](LONG style) { property_.window_style &= style; });
+    }
+
     void form::create()
     {
         if (created_) {
@@ -48,36 +91,12 @@ namespace mado
 
     void form::enable_maximizebox()
     {
-        if (!created_) {
-            property_.window_style |= WS_MAXIMIZEBOX;
-            return;
-        }
-        auto const style = ::GetWindowLongPtr(hwnd_, GWL_STYLE);
-        if (style == 0UL) {
-            throw std::system_error{make_error_code()};
-        }
-        ::SetLastError(0UL);
-        ::SetWindowLongPtr(hwnd_, GWL_STYLE, style | WS_MAXIMIZEBOX);
-        if (::GetLastError() != 0UL) {
-            throw std::system_error{make_error_code()};
-        }
+        enable_window_style(WS_MAXIMIZEBOX);
     }
 
     void form::disable_maximizebox()
     {
-        if (!created_) {
-            property_.window_style &= ~WS_MAXIMIZEBOX;
-            return;
-        }
-        auto const style = ::GetWindowLongPtr(hwnd_, GWL_STYLE);
-        if (style == 0UL) {
-            throw std::system_error{make_error_code()};
-        }
-        ::SetLastError(0UL);
-        ::SetWindowLongPtr(hwnd_, GWL_STYLE, style & ~WS_MAXIMIZEBOX);
-        if (::GetLastError() != 0UL) {
-            throw std::system_error{make_error_code()};
-        }
+        disable_window_style(WS_MAXIMIZEBOX);
     }
 
     bool form::is_enabled_maximizebox() const
