@@ -18,6 +18,7 @@ namespace mado
 
         void enable_window_style(LONG style);
         void disable_window_style(LONG style);
+        bool is_enabled_window_style(LONG style) const;
 
     protected:
         form();
@@ -29,6 +30,9 @@ namespace mado
         void enable_maximizebox();
         void disable_maximizebox();
         bool is_enabled_maximizebox() const;
+        void enable_minimizebox();
+        void disable_minimizebox();
+        bool is_enabled_minimizebox() const;
 
         template <typename Form, typename ...Args>
         friend std::variant<std::error_code, std::shared_ptr<form>> make_form(Args&&... args);

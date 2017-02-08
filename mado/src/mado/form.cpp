@@ -37,6 +37,18 @@ namespace mado
         {
             toggle_window_style(form, style, std::forward<StyleSetter>(setter), std::bit_and<>{});
         }
+
+        bool is_enabled_window_style(form const& form, DWORD window_style, LONG style)
+        {
+            if (!form.is_created()) {
+                return window_style & style;
+            }
+            auto const current_style = ::GetWindowLongPtr(form.hwnd(), GWL_STYLE);
+            if (current_style == 0UL) {
+                throw std::system_error{make_error_code()};
+            }
+            return current_style & style;
+        }
     }
 
     form::form()
@@ -71,6 +83,11 @@ namespace mado
         mado::disable_window_style(*this, ~style, [this](LONG style) { property_.window_style &= style; });
     }
 
+    bool form::is_enabled_window_style(LONG style) const
+    {
+        return mado::is_enabled_window_style(*this, property_.window_style, style);
+    }
+
     void form::create()
     {
         if (created_) {
@@ -101,13 +118,21 @@ namespace mado
 
     bool form::is_enabled_maximizebox() const
     {
-        if (!created_) {
-            return property_.window_style & WS_MAXIMIZEBOX;
-        }
-        auto const style = ::GetWindowLongPtr(hwnd_, GWL_STYLE);
-        if (style == 0UL) {
-            throw std::system_error{make_error_code()};
-        }
-        return style & WS_MAXIMIZEBOX;
+        return is_enabled_window_style(WS_MAXIMIZEBOX);
+    }
+
+    void form::enable_minimizebox()
+    {
+        enable_window_style(WS_MINIMIZEBOX);
+    }
+
+    void form::disable_minimizebox()
+    {
+        disable_window_style(WS_MINIMIZEBOX);
+    }
+
+    bool form::is_enabled_minimizebox() const
+    {
+        return is_enabled_window_style(WS_MINIMIZEBOX);
     }
 }

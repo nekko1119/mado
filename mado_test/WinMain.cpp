@@ -13,8 +13,8 @@ struct main_form
             form->add_close_handler([](std::shared_ptr<mado::form>) {
                 return MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OKCANCEL) == IDOK;
             });
-            form->disable_maximizebox();
             form->create();
+            form->disable_minimizebox();
             form->title(_T("foo"));
             form->show();
             mado::application<mado::blocking>::run(form);
