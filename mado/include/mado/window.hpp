@@ -21,7 +21,7 @@ namespace mado
             T* wnd = nullptr;
             if (msg == WM_NCCREATE) {
                 auto const cs = reinterpret_cast<CREATESTRUCT const*>(lp);
-                wnd = reinterpret_cast<T*>(cs->lpCreateParams);
+                wnd = static_cast<T*>(cs->lpCreateParams);
                 ::SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(wnd));
                 wnd->hwnd_ = hwnd;
             } else {

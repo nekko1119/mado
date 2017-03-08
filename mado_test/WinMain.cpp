@@ -20,7 +20,7 @@ struct main_form
             mado::application<mado::blocking>::run(form);
         } catch (std::exception const& e) {
             auto message = e.what();
-            (void)message;
+            (void) message;
         }
     }
 
