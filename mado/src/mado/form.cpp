@@ -20,8 +20,8 @@ namespace mado
                 throw std::system_error{make_error_code()};
             }
             ::SetLastError(0UL);
-            ::SetWindowLongPtr(form.hwnd(), GWL_STYLE, std::forward<Op>(op)(current_style, style));
-            if (::GetLastError() != 0UL) {
+            ::SetWindowLongPtr(form.hwnd(), GWL_STYLE, op(current_style, style));
+            if (::GetLastError() != 0UL && ::GetLastError() != ERROR_ALREADY_EXISTS) {
                 throw std::system_error{make_error_code()};
             }
         }

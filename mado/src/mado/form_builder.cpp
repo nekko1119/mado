@@ -7,19 +7,6 @@
 
 namespace mado
 {
-    namespace
-    {
-        struct visitor {
-            void operator()(std::shared_ptr<form> f) const {
-                f->create();
-            }
-            template <typename Other>
-            void operator()(Other&&) const {
-                // 何もしない
-            }
-        };
-    }
-
     form_builder& form_builder::title(tstring_view title) noexcept
     {
         property_.title = std::move(title);
@@ -44,7 +31,7 @@ namespace mado
         return *this;
     }
 
-    std::variant<std::error_code, std::shared_ptr<form>> form_builder::build() const
+    std::shared_ptr<form> form_builder::build() const
     {
         auto const class_name = generate_random_string(32U);
         WNDCLASSEX wc;
@@ -61,8 +48,7 @@ namespace mado
         wc.lpszClassName = class_name.c_str();
         wc.hIconSm = static_cast<HICON>(LoadImage(nullptr, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
         auto form = make_form(wc, property_);
-
-        std::visit(visitor{}, form);
+        form->create();
         return form;
     }
 }

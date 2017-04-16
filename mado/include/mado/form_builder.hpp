@@ -19,7 +19,7 @@ namespace mado
         form_builder& size(int x, int y) noexcept;
         form_builder& parent(HWND parent) noexcept;
 
-        std::variant<std::error_code, std::shared_ptr<form>> build() const;
+        std::shared_ptr<form> build() const;
     };
 }
 

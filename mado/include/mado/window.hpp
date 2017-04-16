@@ -34,7 +34,9 @@ namespace mado
         }
 
     private:
-        static bool default_callback(std::shared_ptr<T>) { return true; }
+        static bool default_callback(std::shared_ptr<T>) {
+            return true;
+        }
 
         create_handler_type create_handler_ = default_callback;
         close_handler_type close_handler_ = default_callback;
