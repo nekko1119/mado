@@ -5,24 +5,24 @@
 #include <mado/detail/make_error_code.hpp>
 #include <Windows.h>
 #include <memory>
-#include <optional>
+#include <system_error>
 
 namespace mado
 {
     struct blocking
     {
-        static std::optional<std::error_code> process()
+        static void process()
         {
             ::MSG msg;
             while (true) {
                 auto const state = ::GetMessage(&msg, nullptr, 0U, 0U);
                 // WM_QUIT が呼ばれた
                 if (state == 0) {
-                    return std::nullopt;
+                    return;
                 }
                 // 何かエラーが起きた
                 if (state == -1) {
-                    return make_error_code();
+                    throw std::system_error{make_error_code()};
                 }
                 ::TranslateMessage(&msg);
                 ::DispatchMessage(&msg);
@@ -43,7 +43,7 @@ namespace mado
                     ::TranslateMessage(&msg);
                     ::DispatchMessage(&msg);
                 } else {
-                    std::forward<F>(f)();
+                    f();
                 }
             }
         }
@@ -59,10 +59,11 @@ namespace mado
         application() = delete;
 
         template <typename Form>
-        static std::optional<std::error_code> run(std::shared_ptr<Form> main_form)
+        static void run(std::shared_ptr<Form> main_form)
         {
+            main_form->create();
             main_form->show();
-            return blocking::process();
+            blocking::process();
         }
     };
 
@@ -75,6 +76,7 @@ namespace mado
         template <typename Form, typename F>
         static void run(std::shared_ptr<Form> main_form, F&& f)
         {
+            main_form->create();
             main_form->show();
             peeking::process(std::forward<F>(f));
         }

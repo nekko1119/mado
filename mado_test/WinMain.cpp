@@ -13,9 +13,9 @@ int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             return MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OKCANCEL) == IDOK;
         });
         form->disable_minimizebox();
+        form->disable_maximizebox();
+        form->enable_minimizebox();
         form->title(_T("foo"));
-        form->create();
-        form->show();
         mado::application<mado::blocking>::run(form);
     } catch (std::system_error const& e) {
         auto const code = e.code();
