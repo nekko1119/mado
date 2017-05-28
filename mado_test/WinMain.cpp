@@ -4,11 +4,11 @@
 int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     auto const form = mado::make_form();
     try {
-        form->add_create_handler([](std::shared_ptr<mado::form>) {
+        form->set_create_handler([](std::shared_ptr<mado::form>) {
             MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OK);
             return true;
         });
-        form->add_close_handler([](std::shared_ptr<mado::form>) {
+        form->set_close_handler([](std::shared_ptr<mado::form>) {
             return MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OKCANCEL) == IDOK;
         });
         form->disable_minimizebox();

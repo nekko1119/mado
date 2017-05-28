@@ -144,12 +144,12 @@ namespace mado
             ::SetWindowText(hwnd_, title.data());
         }
 
-        void add_create_handler(create_handler_type const& handler)
+        void set_create_handler(create_handler_type const& handler)
         {
             create_handler_ = handler;
         }
 
-        void add_close_handler(close_handler_type const& handler)
+        void set_close_handler(close_handler_type const& handler)
         {
             close_handler_ = handler;
         }
