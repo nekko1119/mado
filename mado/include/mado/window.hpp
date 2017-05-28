@@ -13,8 +13,8 @@ namespace mado
         : public std::enable_shared_from_this<window<T>>
     {
     public:
-        using create_handler_type = std::function<bool(std::shared_ptr<T>)>;
-        using close_handler_type = std::function<bool(std::shared_ptr<T>)>;
+        using should_create_handler_type = std::function<bool(std::shared_ptr<T>)>;
+        using should_close_handler_type = std::function<bool(std::shared_ptr<T>)>;
 
         static LRESULT CALLBACK window_procedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         {
@@ -34,24 +34,24 @@ namespace mado
         }
 
     private:
-        static bool default_callback(std::shared_ptr<T>) {
+        static bool default_comfirm_callback(std::shared_ptr<T>) {
             return true;
         }
 
-        create_handler_type create_handler_ = default_callback;
-        close_handler_type close_handler_ = default_callback;
+        should_create_handler_type should_create_handler_ = default_comfirm_callback;
+        should_close_handler_type shoukd_close_handler_ = default_comfirm_callback;
 
         LRESULT procedure(UINT msg, WPARAM wp, LPARAM lp)
         {
             auto wnd = std::static_pointer_cast<T>(shared_from_this());
             switch (msg) {
                 case WM_CREATE: {
-                    created_ = create_handler_(wnd);
+                    created_ = should_create_handler_(wnd);
                     rejected_creation_ = !created_;
                     return created_ ? 0L : -1L;
                 }
                 case WM_CLOSE: {
-                    auto const closed = close_handler_(wnd);
+                    auto const closed = shoukd_close_handler_(wnd);
                     if (closed) {
                         ::DestroyWindow(hwnd_);
                     }
@@ -130,7 +130,6 @@ namespace mado
         {
             if (!created_) {
                 return property_.style & WS_VISIBLE;
-                return;
             }
             return ::IsWindowVisible(hwnd_);
         }
@@ -144,14 +143,14 @@ namespace mado
             ::SetWindowText(hwnd_, title.data());
         }
 
-        void set_create_handler(create_handler_type const& handler)
+        void set_should_create_handler(should_create_handler_type const& handler)
         {
-            create_handler_ = handler;
+            should_create_handler_ = handler;
         }
 
-        void set_close_handler(close_handler_type const& handler)
+        void set_should_close_handler(should_close_handler_type const& handler)
         {
-            close_handler_ = handler;
+            shoukd_close_handler_ = handler;
         }
     };
 }

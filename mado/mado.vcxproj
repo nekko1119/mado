@@ -90,32 +90,32 @@
     <OutDir>$(ProjectDir)lib\</OutDir>
     <CodeAnalysisRuleSet>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <EnableCppCoreCheck>true</EnableCppCoreCheck>
-    <EnableExperimentalCppCoreCheck>true</EnableExperimentalCppCoreCheck>
+    <EnableCppCoreCheck>false</EnableCppCoreCheck>
+    <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>$(ProjectName)_$(PlatformTarget)_$(Configuration)</TargetName>
     <OutDir>$(ProjectDir)lib\</OutDir>
     <CodeAnalysisRuleSet>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <EnableCppCoreCheck>true</EnableCppCoreCheck>
-    <EnableExperimentalCppCoreCheck>true</EnableExperimentalCppCoreCheck>
+    <EnableCppCoreCheck>false</EnableCppCoreCheck>
+    <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>$(ProjectName)_$(PlatformTarget)_$(Configuration)</TargetName>
     <OutDir>$(ProjectDir)lib\</OutDir>
     <CodeAnalysisRuleSet>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <EnableCppCoreCheck>true</EnableCppCoreCheck>
-    <EnableExperimentalCppCoreCheck>true</EnableExperimentalCppCoreCheck>
+    <EnableCppCoreCheck>false</EnableCppCoreCheck>
+    <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>$(ProjectName)_$(PlatformTarget)_$(Configuration)</TargetName>
     <OutDir>$(ProjectDir)lib\</OutDir>
     <CodeAnalysisRuleSet>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <EnableCppCoreCheck>true</EnableCppCoreCheck>
-    <EnableExperimentalCppCoreCheck>true</EnableExperimentalCppCoreCheck>
+    <EnableCppCoreCheck>false</EnableCppCoreCheck>
+    <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
