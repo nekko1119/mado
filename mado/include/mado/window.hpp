@@ -112,6 +112,7 @@ namespace mado
         {
             if (!created_) {
                 property_.window_style |= WS_VISIBLE;
+                return;
             }
             ::ShowWindow(hwnd_, SW_SHOW);
         }
@@ -120,6 +121,7 @@ namespace mado
         {
             if (!created_) {
                 property_.window_style &= ~WS_VISIBLE;
+                return;
             }
             ::ShowWindow(hwnd_, SW_HIDE);
         }
@@ -128,6 +130,7 @@ namespace mado
         {
             if (!created_) {
                 return property_.style & WS_VISIBLE;
+                return;
             }
             return ::IsWindowVisible(hwnd_);
         }
@@ -136,6 +139,7 @@ namespace mado
         {
             if (!created_) {
                 property_.title = title.data();
+                return;
             }
             ::SetWindowText(hwnd_, title.data());
         }
