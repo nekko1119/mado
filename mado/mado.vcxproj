@@ -27,14 +27,12 @@
     <ClInclude Include="include\mado\utility\random_generator.hpp" />
     <ClInclude Include="include\mado\utility\tstring.hpp" />
     <ClInclude Include="include\mado\window.hpp" />
-    <ClInclude Include="include\mado\form_builder.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\mado\detail\window_property.cpp" />
     <ClCompile Include="src\mado\form.cpp" />
     <ClCompile Include="src\mado\detail\make_error_code.cpp" />
     <ClCompile Include="src\mado\utility\random_generator.cpp" />
-    <ClCompile Include="src\mado\form_builder.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{178FF189-8880-4836-8DA3-1624F1FF0BF0}</ProjectGuid>

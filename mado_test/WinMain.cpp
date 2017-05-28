@@ -1,8 +1,7 @@
 ﻿#include <mado/application.hpp>
-#include <mado/form_builder.hpp>
+#include <mado/form.hpp>
 
 int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-    //auto const form = mado::form_builder{}.title(_T("hoge")).build();
     auto const form = mado::make_form();
     try {
         form->add_create_handler([](std::shared_ptr<mado::form>) {
@@ -12,8 +11,8 @@ int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         form->add_close_handler([](std::shared_ptr<mado::form>) {
             return MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OKCANCEL) == IDOK;
         });
-        form->create();
         form->disable_minimizebox();
+        form->create();
         form->title(_T("foo"));
         form->show();
         mado::application<mado::blocking>::run(form);

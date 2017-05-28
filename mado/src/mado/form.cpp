@@ -21,7 +21,7 @@ namespace mado
             }
             ::SetLastError(0UL);
             ::SetWindowLongPtr(form.hwnd(), GWL_STYLE, op(current_style, style));
-            if (::GetLastError() != 0UL && ::GetLastError() != ERROR_ALREADY_EXISTS) {
+            if (::GetLastError() != 0UL) {
                 throw std::system_error{make_error_code()};
             }
         }
