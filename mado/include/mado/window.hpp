@@ -5,16 +5,16 @@
 #include <Windows.h>
 #include <functional>
 #include <memory>
+#include <utility>
 
 namespace mado
 {
     template <typename T>
     class window
-        : public std::enable_shared_from_this<window<T>>
     {
     public:
-        using should_create_handler_type = std::function<bool(std::shared_ptr<T>)>;
-        using should_close_handler_type = std::function<bool(std::shared_ptr<T>)>;
+        using should_create_handler_type = std::function<bool (T&)>;
+        using should_close_handler_type = std::function<bool (T&)>;
 
         static LRESULT CALLBACK window_procedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         {
@@ -34,16 +34,16 @@ namespace mado
         }
 
     private:
-        static bool default_comfirm_callback(std::shared_ptr<T>) {
+        static bool default_comfirm_callback(T&) {
             return true;
         }
 
         should_create_handler_type should_create_handler_ = default_comfirm_callback;
-        should_close_handler_type shoukd_close_handler_ = default_comfirm_callback;
+        should_close_handler_type should_close_handler_ = default_comfirm_callback;
 
         LRESULT procedure(UINT msg, WPARAM wp, LPARAM lp)
         {
-            auto wnd = std::static_pointer_cast<T>(shared_from_this());
+            auto& wnd = static_cast<T&>(*this);
             switch (msg) {
                 case WM_CREATE: {
                     created_ = should_create_handler_(wnd);
@@ -51,7 +51,7 @@ namespace mado
                     return created_ ? 0L : -1L;
                 }
                 case WM_CLOSE: {
-                    auto const closed = shoukd_close_handler_(wnd);
+                    auto const closed = should_close_handler_(wnd);
                     if (closed) {
                         ::DestroyWindow(hwnd_);
                     }
@@ -150,9 +150,23 @@ namespace mado
 
         void set_should_close_handler(should_close_handler_type const& handler)
         {
-            shoukd_close_handler_ = handler;
+            should_close_handler_ = handler;
         }
+
+    private:
+        template <typename T, typename ...Args>
+        static std::unique_ptr<T> make(Args&&... args) {
+            return std::unique_ptr<T>{new T{std::forward<Args>(args)...}};
+        }
+
+        template <typename T, typename ...Args>
+        friend std::unique_ptr<T> make(Args&&... args);
     };
+
+    template <typename T, typename ...Args>
+    std::unique_ptr<T> make(Args&&... args) {
+        return window<T>::make<T>(std::forward<Args>(args)...);
+    }
 }
 
 #endif

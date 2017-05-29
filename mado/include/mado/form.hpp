@@ -19,11 +19,10 @@ namespace mado
         void disable_window_style(LONG style);
         bool is_enabled_window_style(LONG style) const;
 
-    protected:
+    public:
         form();
         form(WNDCLASSEX const& wc, window_property const& property);
 
-    public:
         virtual ~form() = default;
         void create();
         void enable_maximizebox();
@@ -32,21 +31,7 @@ namespace mado
         void enable_minimizebox();
         void disable_minimizebox();
         bool is_enabled_minimizebox() const;
-
-        template <typename Form, typename ...Args>
-        friend std::shared_ptr<form> make_form(Args&&... args);
     };
-
-    template <typename ...Args>
-    std::shared_ptr<form> make_form(Args&&... args)
-    {
-        struct sub : public form {
-            sub() : form{} {}
-            sub(WNDCLASSEX const& wc, window_property const& property) : form{wc, property} {}
-        };
-        auto form = std::make_shared<sub>(std::forward<Args>(args)...);
-        return std::static_pointer_cast<class form>(form);
-    }
 }
 
 #endif

@@ -59,7 +59,7 @@ namespace mado
         application() = delete;
 
         template <typename Form>
-        static void run(std::shared_ptr<Form> main_form)
+        static void run(std::unique_ptr<Form> main_form)
         {
             main_form->create();
             main_form->show();
@@ -74,7 +74,7 @@ namespace mado
         application() = delete;
 
         template <typename Form, typename F>
-        static void run(std::shared_ptr<Form> main_form, F&& f)
+        static void run(std::unique_ptr<Form> main_form, F&& f)
         {
             main_form->create();
             main_form->show();
