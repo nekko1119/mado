@@ -31,6 +31,9 @@ namespace mado
         void enable_minimizebox();
         void disable_minimizebox();
         bool is_enabled_minimizebox() const;
+        void enable_close_button();
+        void disable_close_button();
+        bool is_enabled_close_button() const;
     };
 }
 

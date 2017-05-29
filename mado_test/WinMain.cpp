@@ -12,9 +12,11 @@ int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         form->set_should_close_handler([](mado::form&) {
             return MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OKCANCEL) == IDOK;
         });
-        form->disable_minimizebox();
-        form->disable_maximizebox();
-        form->enable_minimizebox();
+        form->create();
+        form->disable_close_button();
+        //form->disable_minimizebox();
+        //form->disable_maximizebox();
+        form->is_enabled_close_button();
         form->title(_T("foo"));
         mado::application<mado::blocking>::run(std::move(form));
     } catch (std::system_error const& e) {

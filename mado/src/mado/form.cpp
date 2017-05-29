@@ -135,4 +135,37 @@ namespace mado
     {
         return is_enabled_window_style(WS_MINIMIZEBOX);
     }
+
+    void form::enable_close_button()
+    {
+        if (!created_) {
+            return;
+        }
+        auto const menu = ::GetSystemMenu(hwnd_, false);
+        ::EnableMenuItem(menu, SC_CLOSE, MF_BYCOMMAND | MF_ENABLED);
+    }
+
+    void form::disable_close_button()
+    {
+        if (!created_) {
+            return;
+        }
+        auto const menu = ::GetSystemMenu(hwnd_, false);
+        ::EnableMenuItem(menu, SC_CLOSE, MF_BYCOMMAND | MF_DISABLED);
+    }
+
+    bool form::is_enabled_close_button() const
+    {
+        if (!created_) {
+            return false;
+        }
+        auto const menu = ::GetSystemMenu(hwnd_, false);
+        MENUITEMINFO info{};
+        info.cbSize = sizeof(info);
+        info.fMask = MIIM_STATE;
+        if (!::GetMenuItemInfo(menu, SC_CLOSE, MF_BYCOMMAND, &info)) {
+            throw std::system_error{make_error_code()};
+        }
+        return info.fState == MF_ENABLED;
+    }
 }
