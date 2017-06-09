@@ -15,6 +15,8 @@ namespace mado
     public:
         using should_create_handler_type = std::function<bool (T&)>;
         using should_close_handler_type = std::function<bool (T&)>;
+        using on_create_handler_type = std::function<void (T&)>;
+        using on_close_handler_type = std::function<void (T&)>;
 
         static LRESULT CALLBACK window_procedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         {
@@ -34,19 +36,30 @@ namespace mado
         }
 
     private:
-        static bool default_comfirm_callback(T&) {
+        static bool default_comfirm_callback(T&)
+        {
             return true;
+        }
+
+        static void default_callback(T&)
+        {
         }
 
         should_create_handler_type should_create_handler_ = default_comfirm_callback;
         should_close_handler_type should_close_handler_ = default_comfirm_callback;
+        on_create_handler_type on_create_handler_ = default_callback;
+        on_close_handler_type on_close_handler_ = default_callback;
 
         LRESULT procedure(UINT msg, WPARAM wp, LPARAM lp)
         {
             auto& wnd = static_cast<T&>(*this);
             switch (msg) {
                 case WM_CREATE: {
-                    created_ = should_create_handler_(wnd);
+                    auto const should_create = should_create_handler_(wnd);
+                    if (should_create) {
+                        on_create_handler_(wnd);
+                    }
+                    created_ = should_create;
                     rejected_creation_ = !created_;
                     return created_ ? 0L : -1L;
                 }
@@ -151,6 +164,16 @@ namespace mado
         void set_should_close_handler(should_close_handler_type const& handler)
         {
             should_close_handler_ = handler;
+        }
+
+        void set_on_create_handler(on_create_handler_type const& handler)
+        {
+            on_create_handler_ = handler;
+        }
+
+        void set_on_close_handler(on_create_handler_type const& handler)
+        {
+            on_close_handler_ = handler;
         }
 
     private:
