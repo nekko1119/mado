@@ -2,6 +2,7 @@
 
 #include <mado/window.hpp>
 #include <functional>
+#include <stdexcept>
 
 namespace mado
 {
@@ -29,8 +30,11 @@ namespace mado
     }
     HWND window_property::create() const
     {
+        if (created_) {
+            throw std::logic_error{"window is already created"};
+        }
         auto const cs = to_createstruct();
-        return ::CreateWindowEx(
+        auto const hwnd = ::CreateWindowEx(
             cs->dwExStyle,
             cs->lpszClass,
             cs->lpszName,
@@ -44,5 +48,7 @@ namespace mado
             cs->hInstance,
             cs->lpCreateParams
         );
+        created_ = true;
+        return hwnd;
     }
 }

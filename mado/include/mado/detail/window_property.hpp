@@ -25,6 +25,9 @@ namespace mado
         explicit window_property(tstring_view class_name);
         std::unique_ptr<CREATESTRUCT> to_createstruct() const;
         HWND create() const;
+
+    private:
+        mutable bool created_ = false;
     };
 
 }
