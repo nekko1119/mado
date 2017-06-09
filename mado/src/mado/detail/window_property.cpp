@@ -1,8 +1,10 @@
 ﻿#include <mado/detail/window_property.hpp>
 
+#include <mado/detail/make_error_code.hpp>
 #include <mado/window.hpp>
 #include <functional>
 #include <stdexcept>
+#include <system_error>
 
 namespace mado
 {
@@ -48,6 +50,9 @@ namespace mado
             cs->hInstance,
             cs->lpCreateParams
         );
+        if (!hwnd) {
+            throw std::system_error{make_error_code()};
+        }
         created_ = true;
         return hwnd;
     }
