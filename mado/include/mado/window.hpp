@@ -13,6 +13,8 @@ namespace mado
     class window
     {
     public:
+        using window_procedure_type = LRESULT (__stdcall *)(HWND, UINT, WPARAM, LPARAM);
+
         using should_create_handler_type = std::function<bool (T&)>;
         using should_close_handler_type = std::function<bool (T&)>;
         using on_create_handler_type = std::function<void (T&)>;
@@ -75,13 +77,14 @@ namespace mado
                     return 0L;
                 }
             }
-            return ::DefWindowProc(hwnd_, msg, wp, lp);
+            return ::CallWindowProc(window_procedure_, hwnd_, msg, wp, lp);
         }
 
     protected:
         HWND hwnd_ = nullptr;
         tstring class_name_;
         window_property property_;
+        window_procedure_type window_procedure_ = ::DefWindowProc;
         bool rejected_creation_ = false;
         bool created_ = false;
 
