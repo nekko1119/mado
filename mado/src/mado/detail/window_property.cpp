@@ -16,7 +16,7 @@ namespace mado
     std::unique_ptr<CREATESTRUCT> window_property::to_createstruct() const
     {
         auto cs = std::make_unique<CREATESTRUCT>();
-        cs->dwExStyle = WS_EX_OVERLAPPEDWINDOW;
+        cs->dwExStyle = window_style_ex;
         cs->lpszClass = class_name.c_str();
         cs->lpszName = title.c_str();
         cs->style = window_style;

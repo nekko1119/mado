@@ -1,5 +1,6 @@
 ﻿#include <mado/form.hpp>
 
+#include <mado/detail/make_error_code.hpp>
 #include <mado/utility/random_generator.hpp>
 #include <functional>
 #include <utility>
@@ -90,7 +91,7 @@ namespace mado
 
     void form::create()
     {
-        if (created_) {
+        if (is_created()) {
             return;
         }
         if (!::RegisterClassEx(&wc_)) {
@@ -100,9 +101,6 @@ namespace mado
         hwnd_ = property_.create();
         if (rejected_creation_) {
             return;
-        }
-        if (!hwnd_) {
-            throw std::system_error{make_error_code()};
         }
     }
 

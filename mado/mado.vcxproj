@@ -24,11 +24,13 @@
     <ClInclude Include="include\mado\detail\make_error_code.hpp" />
     <ClInclude Include="include\mado\detail\window_property.hpp" />
     <ClInclude Include="include\mado\form.hpp" />
+    <ClInclude Include="include\mado\button.hpp" />
     <ClInclude Include="include\mado\utility\random_generator.hpp" />
     <ClInclude Include="include\mado\utility\tstring.hpp" />
     <ClInclude Include="include\mado\window.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\mado\button.cpp" />
     <ClCompile Include="src\mado\detail\window_property.cpp" />
     <ClCompile Include="src\mado\form.cpp" />
     <ClCompile Include="src\mado\detail\make_error_code.cpp" />
@@ -88,7 +90,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>$(ProjectName)_$(PlatformTarget)_$(Configuration)</TargetName>
     <OutDir>$(ProjectDir)lib\</OutDir>
-    <CodeAnalysisRuleSet>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
@@ -96,7 +98,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>$(ProjectName)_$(PlatformTarget)_$(Configuration)</TargetName>
     <OutDir>$(ProjectDir)lib\</OutDir>
-    <CodeAnalysisRuleSet>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
@@ -104,7 +106,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>$(ProjectName)_$(PlatformTarget)_$(Configuration)</TargetName>
     <OutDir>$(ProjectDir)lib\</OutDir>
-    <CodeAnalysisRuleSet>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>
@@ -112,7 +114,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>$(ProjectName)_$(PlatformTarget)_$(Configuration)</TargetName>
     <OutDir>$(ProjectDir)lib\</OutDir>
-    <CodeAnalysisRuleSet>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableCppCoreCheck>false</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>false</EnableExperimentalCppCoreCheck>

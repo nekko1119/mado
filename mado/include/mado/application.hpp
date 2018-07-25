@@ -61,8 +61,6 @@ namespace mado
         template <typename Form>
         static void run(std::unique_ptr<Form> main_form)
         {
-            main_form->create();
-            main_form->show();
             blocking::process();
         }
     };

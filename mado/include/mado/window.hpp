@@ -3,6 +3,7 @@
 
 #include <mado/detail/window_property.hpp>
 #include <Windows.h>
+#include <Windowsx.h>
 #include <functional>
 #include <memory>
 #include <utility>
@@ -13,12 +14,13 @@ namespace mado
     class window
     {
     public:
-        using window_procedure_type = LRESULT (__stdcall *)(HWND, UINT, WPARAM, LPARAM);
+        using procedure_type = LRESULT (__stdcall *)(HWND, UINT, WPARAM, LPARAM);
 
         using should_create_handler_type = std::function<bool (T&)>;
         using should_close_handler_type = std::function<bool (T&)>;
         using on_create_handler_type = std::function<void (T&)>;
         using on_close_handler_type = std::function<void (T&)>;
+        using on_click_handler_type = std::function<void (T&, std::pair<short, short> position)>;
 
         static LRESULT CALLBACK window_procedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         {
@@ -47,10 +49,15 @@ namespace mado
         {
         }
 
+        static void default_click_callback(T&, std::pair<short, short>)
+        {
+        }
+
         should_create_handler_type should_create_handler_ = default_comfirm_callback;
         should_close_handler_type should_close_handler_ = default_comfirm_callback;
         on_create_handler_type on_create_handler_ = default_callback;
         on_close_handler_type on_close_handler_ = default_callback;
+        on_click_handler_type on_click_handler_ = default_click_callback;
 
         LRESULT procedure(UINT msg, WPARAM wp, LPARAM lp)
         {
@@ -63,7 +70,10 @@ namespace mado
                     }
                     created_ = should_create;
                     rejected_creation_ = !created_;
-                    return created_ ? 0L : -1L;
+                    if (!created_) {
+                        return -1L;
+                    }
+                    return window_procedure_(hwnd_, msg, wp, lp);
                 }
                 case WM_CLOSE: {
                     auto const closed = should_close_handler_(wnd);
@@ -76,6 +86,12 @@ namespace mado
                     ::PostQuitMessage(0);
                     return 0L;
                 }
+                case WM_LBUTTONUP: {
+                    auto const x = static_cast<short>(GET_X_LPARAM(lp));
+                    auto const y = static_cast<short>(GET_Y_LPARAM(lp));
+                    on_click_handler_(wnd, {x, y});
+                    break;
+                }
             }
             return ::CallWindowProc(window_procedure_, hwnd_, msg, wp, lp);
         }
@@ -84,7 +100,7 @@ namespace mado
         HWND hwnd_ = nullptr;
         tstring class_name_;
         window_property property_;
-        window_procedure_type window_procedure_ = ::DefWindowProc;
+        procedure_type window_procedure_ = ::DefWindowProc;
         bool rejected_creation_ = false;
         bool created_ = false;
 
@@ -145,7 +161,7 @@ namespace mado
         bool is_visible() const
         {
             if (!created_) {
-                return property_.style & WS_VISIBLE;
+                return property_.window_style & WS_VISIBLE;
             }
             return ::IsWindowVisible(hwnd_);
         }
@@ -177,6 +193,11 @@ namespace mado
         void set_on_close_handler(on_create_handler_type const& handler)
         {
             on_close_handler_ = handler;
+        }
+
+        void set_on_click_handler(on_click_handler_type const& handler)
+        {
+            on_click_handler_ = handler;
         }
 
     private:
