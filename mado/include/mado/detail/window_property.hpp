@@ -2,15 +2,15 @@
 #define MADO_DETAIL_WINDOW_PROPERTY_HPP
 
 #include <mado/utility/tstring.hpp>
+
 #include <Windows.h>
+
 #include <memory>
 #include <type_traits>
 #include <utility>
 
-namespace mado
-{
-    struct window_property
-    {
+namespace mado {
+    struct window_property {
         tstring class_name;
         tstring title;
         LONG window_style = WS_OVERLAPPEDWINDOW;
@@ -30,7 +30,6 @@ namespace mado
     private:
         mutable bool created_ = false;
     };
-
 }
 
 #endif

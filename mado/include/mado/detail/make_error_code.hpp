@@ -3,8 +3,7 @@
 
 #include <system_error>
 
-namespace mado
-{
+namespace mado {
     std::error_code make_error_code() noexcept;
 }
 

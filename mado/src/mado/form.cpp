@@ -1,17 +1,14 @@
-﻿#include <mado/form.hpp>
-
-#include <mado/detail/make_error_code.hpp>
+﻿#include <mado/detail/make_error_code.hpp>
+#include <mado/form.hpp>
 #include <mado/utility/random_generator.hpp>
+
 #include <functional>
 #include <utility>
 
-namespace mado
-{
-    namespace
-    {
+namespace mado {
+    namespace {
         template <typename StyleSetter, typename Op>
-        void toggle_window_style(form const& form, LONG style, StyleSetter&& setter, Op&& op)
-        {
+        void toggle_window_style(form const& form, LONG style, StyleSetter&& setter, Op&& op) {
             if (!form.is_created()) {
                 setter(style);
                 return;
@@ -28,19 +25,16 @@ namespace mado
         }
 
         template <typename StyleSetter>
-        void enable_window_style(form const& form, LONG style, StyleSetter&& setter)
-        {
+        void enable_window_style(form const& form, LONG style, StyleSetter&& setter) {
             toggle_window_style(form, style, std::forward<StyleSetter>(setter), std::bit_or<>{});
         }
 
         template <typename StyleSetter>
-        void disable_window_style(form const& form, LONG style, StyleSetter&& setter)
-        {
+        void disable_window_style(form const& form, LONG style, StyleSetter&& setter) {
             toggle_window_style(form, style, std::forward<StyleSetter>(setter), std::bit_and<>{});
         }
 
-        bool is_enabled_window_style(form const& form, DWORD window_style, LONG style)
-        {
+        bool is_enabled_window_style(form const& form, DWORD window_style, LONG style) {
             if (!form.is_created()) {
                 return window_style & style;
             }
@@ -52,9 +46,7 @@ namespace mado
         }
     }
 
-    form::form()
-        : window{generate_random_string(32U)}
-    {
+    form::form() : window{generate_random_string(32U)} {
         wc_.cbSize = sizeof(wc_);
         wc_.style = CS_HREDRAW | CS_VREDRAW;
         wc_.lpfnWndProc = window::window_procedure;
@@ -69,28 +61,21 @@ namespace mado
         wc_.hIconSm = static_cast<HICON>(LoadImage(nullptr, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
     }
 
-    form::form(WNDCLASSEX const& wc, window_property const& property)
-        : window{wc.lpszClassName, property}, wc_{wc}
-    {
-    }
+    form::form(WNDCLASSEX const& wc, window_property const& property) : window{wc.lpszClassName, property}, wc_{wc} {}
 
-    void form::enable_window_style(LONG style)
-    {
+    void form::enable_window_style(LONG style) {
         mado::enable_window_style(*this, style, [this](LONG style) { property_.window_style |= style; });
     }
 
-    void form::disable_window_style(LONG style)
-    {
+    void form::disable_window_style(LONG style) {
         mado::disable_window_style(*this, ~style, [this](LONG style) { property_.window_style &= style; });
     }
 
-    bool form::is_enabled_window_style(LONG style) const
-    {
+    bool form::is_enabled_window_style(LONG style) const {
         return mado::is_enabled_window_style(*this, property_.window_style, style);
     }
 
-    void form::create()
-    {
+    void form::create() {
         if (is_created()) {
             return;
         }
@@ -104,38 +89,31 @@ namespace mado
         }
     }
 
-    void form::enable_maximizebox()
-    {
+    void form::enable_maximizebox() {
         enable_window_style(WS_MAXIMIZEBOX);
     }
 
-    void form::disable_maximizebox()
-    {
+    void form::disable_maximizebox() {
         disable_window_style(WS_MAXIMIZEBOX);
     }
 
-    bool form::is_enabled_maximizebox() const
-    {
+    bool form::is_enabled_maximizebox() const {
         return is_enabled_window_style(WS_MAXIMIZEBOX);
     }
 
-    void form::enable_minimizebox()
-    {
+    void form::enable_minimizebox() {
         enable_window_style(WS_MINIMIZEBOX);
     }
 
-    void form::disable_minimizebox()
-    {
+    void form::disable_minimizebox() {
         disable_window_style(WS_MINIMIZEBOX);
     }
 
-    bool form::is_enabled_minimizebox() const
-    {
+    bool form::is_enabled_minimizebox() const {
         return is_enabled_window_style(WS_MINIMIZEBOX);
     }
 
-    void form::enable_close_button()
-    {
+    void form::enable_close_button() {
         if (!created_) {
             return;
         }
@@ -143,8 +121,7 @@ namespace mado
         ::EnableMenuItem(menu, SC_CLOSE, MF_BYCOMMAND | MF_ENABLED);
     }
 
-    void form::disable_close_button()
-    {
+    void form::disable_close_button() {
         if (!created_) {
             return;
         }
@@ -152,8 +129,7 @@ namespace mado
         ::EnableMenuItem(menu, SC_CLOSE, MF_BYCOMMAND | MF_DISABLED);
     }
 
-    bool form::is_enabled_close_button() const
-    {
+    bool form::is_enabled_close_button() const {
         if (!created_) {
             return false;
         }

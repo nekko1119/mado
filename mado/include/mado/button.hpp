@@ -3,11 +3,8 @@
 
 #include <mado/window.hpp>
 
-namespace mado
-{
-    class button
-        : public window<button>
-    {
+namespace mado {
+    class button : public window<button> {
     public:
         explicit button(HWND parent, tstring_view title);
         void create();

@@ -2,14 +2,12 @@
 #define MADO_FORM_HPP
 
 #include <mado/window.hpp>
+
 #include <unordered_set>
 #include <utility>
 
-namespace mado
-{
-    class form
-        : public window<form>
-    {
+namespace mado {
+    class form : public window<form> {
         WNDCLASSEX wc_;
 
         void enable_window_style(LONG style);

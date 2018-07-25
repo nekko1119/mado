@@ -1,20 +1,15 @@
-﻿#include <mado/detail/window_property.hpp>
-
-#include <mado/detail/make_error_code.hpp>
+﻿#include <mado/detail/make_error_code.hpp>
+#include <mado/detail/window_property.hpp>
 #include <mado/window.hpp>
+
 #include <functional>
 #include <stdexcept>
 #include <system_error>
 
-namespace mado
-{
-    window_property::window_property(tstring_view class_name)
-        : class_name{class_name}
-    {
-    }
+namespace mado {
+    window_property::window_property(tstring_view class_name) : class_name{class_name} {}
 
-    std::unique_ptr<CREATESTRUCT> window_property::to_createstruct() const
-    {
+    std::unique_ptr<CREATESTRUCT> window_property::to_createstruct() const {
         auto cs = std::make_unique<CREATESTRUCT>();
         cs->dwExStyle = window_style_ex;
         cs->lpszClass = class_name.c_str();
@@ -30,26 +25,12 @@ namespace mado
         cs->lpCreateParams = create_params;
         return cs;
     }
-    HWND window_property::create() const
-    {
+    HWND window_property::create() const {
         if (created_) {
             throw std::logic_error{"window is already created"};
         }
         auto const cs = to_createstruct();
-        auto const hwnd = ::CreateWindowEx(
-            cs->dwExStyle,
-            cs->lpszClass,
-            cs->lpszName,
-            cs->style,
-            cs->x,
-            cs->y,
-            cs->cx,
-            cs->cy,
-            cs->hwndParent,
-            cs->hMenu,
-            cs->hInstance,
-            cs->lpCreateParams
-        );
+        auto const hwnd = ::CreateWindowEx(cs->dwExStyle, cs->lpszClass, cs->lpszName, cs->style, cs->x, cs->y, cs->cx, cs->cy, cs->hwndParent, cs->hMenu, cs->hInstance, cs->lpCreateParams);
         if (!hwnd) {
             throw std::system_error{make_error_code()};
         }

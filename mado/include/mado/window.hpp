@@ -2,28 +2,27 @@
 #define MADO_WINDOW_HPP
 
 #include <mado/detail/window_property.hpp>
+
 #include <Windows.h>
 #include <Windowsx.h>
+
 #include <functional>
 #include <memory>
 #include <utility>
 
-namespace mado
-{
+namespace mado {
     template <typename T>
-    class window
-    {
+    class window {
     public:
-        using procedure_type = LRESULT (__stdcall *)(HWND, UINT, WPARAM, LPARAM);
+        using procedure_type = LRESULT(__stdcall*)(HWND, UINT, WPARAM, LPARAM);
 
-        using should_create_handler_type = std::function<bool (T&)>;
-        using should_close_handler_type = std::function<bool (T&)>;
-        using on_create_handler_type = std::function<void (T&)>;
-        using on_close_handler_type = std::function<void (T&)>;
-        using on_click_handler_type = std::function<void (T&, std::pair<short, short> position)>;
+        using should_create_handler_type = std::function<bool(T&)>;
+        using should_close_handler_type = std::function<bool(T&)>;
+        using on_create_handler_type = std::function<void(T&)>;
+        using on_close_handler_type = std::function<void(T&)>;
+        using on_click_handler_type = std::function<void(T&, std::pair<short, short> position)>;
 
-        static LRESULT CALLBACK window_procedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
-        {
+        static LRESULT CALLBACK window_procedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
             T* wnd = nullptr;
             if (msg == WM_NCCREATE) {
                 auto const cs = reinterpret_cast<CREATESTRUCT const*>(lp);
@@ -40,18 +39,13 @@ namespace mado
         }
 
     private:
-        static bool default_comfirm_callback(T&)
-        {
+        static bool default_comfirm_callback(T&) {
             return true;
         }
 
-        static void default_callback(T&)
-        {
-        }
+        static void default_callback(T&) {}
 
-        static void default_click_callback(T&, std::pair<short, short>)
-        {
-        }
+        static void default_click_callback(T&, std::pair<short, short>) {}
 
         should_create_handler_type should_create_handler_ = default_comfirm_callback;
         should_close_handler_type should_close_handler_ = default_comfirm_callback;
@@ -59,8 +53,7 @@ namespace mado
         on_close_handler_type on_close_handler_ = default_callback;
         on_click_handler_type on_click_handler_ = default_click_callback;
 
-        LRESULT procedure(UINT msg, WPARAM wp, LPARAM lp)
-        {
+        LRESULT procedure(UINT msg, WPARAM wp, LPARAM lp) {
             auto& wnd = static_cast<T&>(*this);
             switch (msg) {
                 case WM_CREATE: {
@@ -104,14 +97,10 @@ namespace mado
         bool rejected_creation_ = false;
         bool created_ = false;
 
-        explicit window(tstring_view class_name)
-            : window{class_name, {}}
-        {
-        }
+        explicit window(tstring_view class_name) : window{class_name, {}} {}
 
-        window(tstring_view class_name, window_property const& property)
-            : class_name_{class_name}, property_{property}
-        {
+        window(tstring_view class_name, window_property const& property) :
+            class_name_{class_name}, property_{property} {
             property_.class_name = class_name_.c_str();
         }
 
@@ -120,28 +109,23 @@ namespace mado
         window& operator=(window const&) = delete;
 
     public:
-        HWND hwnd() const
-        {
+        HWND hwnd() const {
             return hwnd_;
         }
 
-        tstring_view class_name() const
-        {
+        tstring_view class_name() const {
             return class_name_;
         }
 
-        window_property const& property() const
-        {
+        window_property const& property() const {
             return property_;
         }
 
-        bool is_created() const
-        {
+        bool is_created() const {
             return created_;
         }
 
-        void show()
-        {
+        void show() {
             if (!created_) {
                 property_.window_style |= WS_VISIBLE;
                 return;
@@ -149,8 +133,7 @@ namespace mado
             ::ShowWindow(hwnd_, SW_SHOW);
         }
 
-        void hide()
-        {
+        void hide() {
             if (!created_) {
                 property_.window_style &= ~WS_VISIBLE;
                 return;
@@ -158,16 +141,14 @@ namespace mado
             ::ShowWindow(hwnd_, SW_HIDE);
         }
 
-        bool is_visible() const
-        {
+        bool is_visible() const {
             if (!created_) {
                 return property_.window_style & WS_VISIBLE;
             }
             return ::IsWindowVisible(hwnd_);
         }
 
-        void title(tstring_view title)
-        {
+        void title(tstring_view title) {
             if (!created_) {
                 property_.title = title.data();
                 return;
@@ -175,42 +156,37 @@ namespace mado
             ::SetWindowText(hwnd_, title.data());
         }
 
-        void set_should_create_handler(should_create_handler_type const& handler)
-        {
+        void set_should_create_handler(should_create_handler_type const& handler) {
             should_create_handler_ = handler;
         }
 
-        void set_should_close_handler(should_close_handler_type const& handler)
-        {
+        void set_should_close_handler(should_close_handler_type const& handler) {
             should_close_handler_ = handler;
         }
 
-        void set_on_create_handler(on_create_handler_type const& handler)
-        {
+        void set_on_create_handler(on_create_handler_type const& handler) {
             on_create_handler_ = handler;
         }
 
-        void set_on_close_handler(on_create_handler_type const& handler)
-        {
+        void set_on_close_handler(on_create_handler_type const& handler) {
             on_close_handler_ = handler;
         }
 
-        void set_on_click_handler(on_click_handler_type const& handler)
-        {
+        void set_on_click_handler(on_click_handler_type const& handler) {
             on_click_handler_ = handler;
         }
 
     private:
-        template <typename T, typename ...Args>
+        template <typename T, typename... Args>
         static std::unique_ptr<T> make(Args&&... args) {
             return std::unique_ptr<T>{new T{std::forward<Args>(args)...}};
         }
 
-        template <typename T, typename ...Args>
+        template <typename T, typename... Args>
         friend std::unique_ptr<T> make(Args&&... args);
     };
 
-    template <typename T, typename ...Args>
+    template <typename T, typename... Args>
     std::unique_ptr<T> make(Args&&... args) {
         return window<T>::make<T>(std::forward<Args>(args)...);
     }

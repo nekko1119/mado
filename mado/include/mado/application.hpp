@@ -3,16 +3,15 @@
 
 #include <mado/config.hpp>
 #include <mado/detail/make_error_code.hpp>
+
 #include <Windows.h>
+
 #include <memory>
 #include <system_error>
 
-namespace mado
-{
-    struct blocking
-    {
-        static void process()
-        {
+namespace mado {
+    struct blocking {
+        static void process() {
             ::MSG msg;
             while (true) {
                 auto const state = ::GetMessage(&msg, nullptr, 0U, 0U);
@@ -30,8 +29,7 @@ namespace mado
         }
     };
 
-    struct peeking
-    {
+    struct peeking {
         template <typename F>
         static void process(F&& f) {
             ::MSG msg;
@@ -59,8 +57,7 @@ namespace mado
         application() = delete;
 
         template <typename Form>
-        static void run(std::unique_ptr<Form> main_form)
-        {
+        static void run(std::unique_ptr<Form> main_form) {
             blocking::process();
         }
     };
@@ -72,8 +69,7 @@ namespace mado
         application() = delete;
 
         template <typename Form, typename F>
-        static void run(std::unique_ptr<Form> main_form, F&& f)
-        {
+        static void run(std::unique_ptr<Form> main_form, F&& f) {
             main_form->create();
             main_form->show();
             peeking::process(std::forward<F>(f));
@@ -82,4 +78,3 @@ namespace mado
 }
 
 #endif
-

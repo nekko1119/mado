@@ -3,15 +3,14 @@
 
 #include <mado/config.hpp>
 #include <mado/utility/tstring.hpp>
+
 #include <algorithm>
 #include <cstddef>
 #include <utility>
 
-namespace mado
-{
+namespace mado {
     template <typename F>
-    tstring generate_random_string(std::size_t length, F&& supplier)
-    {
+    tstring generate_random_string(std::size_t length, F&& supplier) {
         tstring buffer(length, '\0');
         std::generate_n(buffer.begin(), length, std::forward<F>(supplier));
         return buffer;
