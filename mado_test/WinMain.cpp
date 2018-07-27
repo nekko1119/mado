@@ -5,7 +5,8 @@
 #include <cstdio>
 
 // test code
-#pragma comment(linker, \
+#pragma comment( \
+    linker, \
     "/manifestdependency:\"type='win32' \
     name='Microsoft.Windows.Common-Controls' \
     version='6.0.0.0' \
@@ -30,8 +31,7 @@ int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int) try {
         MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OK);
         ::OutputDebugString(_T("should create"));
     });
-    form->should_close(
-        [](mado::form&) { return MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OKCANCEL) == IDOK; });
+    form->should_close([](mado::form&) { return MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OKCANCEL) == IDOK; });
     form->create();
     auto button = mado::make<mado::button>(form->hwnd(), _T("buttonやで"));
     button->on_create([](mado::button&) { MessageBox(nullptr, _T("bar"), _T("bar"), MB_OK); });

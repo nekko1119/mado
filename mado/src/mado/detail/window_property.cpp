@@ -30,7 +30,19 @@ namespace mado {
             throw std::logic_error{"window is already created"};
         }
         auto const cs = to_createstruct();
-        auto const hwnd = ::CreateWindowEx(cs->dwExStyle, cs->lpszClass, cs->lpszName, cs->style, cs->x, cs->y, cs->cx, cs->cy, cs->hwndParent, cs->hMenu, cs->hInstance, cs->lpCreateParams);
+        auto const hwnd = ::CreateWindowEx(
+            cs->dwExStyle,
+            cs->lpszClass,
+            cs->lpszName,
+            cs->style,
+            cs->x,
+            cs->y,
+            cs->cx,
+            cs->cy,
+            cs->hwndParent,
+            cs->hMenu,
+            cs->hInstance,
+            cs->lpCreateParams);
         if (!hwnd) {
             throw std::system_error{make_error_code()};
         }

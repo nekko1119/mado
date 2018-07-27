@@ -51,8 +51,7 @@ namespace mado {
     class application;
 
     template <>
-    class application<blocking> final
-    {
+    class application<blocking> final {
     public:
         application() = delete;
 
@@ -63,8 +62,7 @@ namespace mado {
     };
 
     template <>
-    class application<peeking> final
-    {
+    class application<peeking> final {
     public:
         application() = delete;
 
