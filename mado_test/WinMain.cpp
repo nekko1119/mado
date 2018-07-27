@@ -26,17 +26,17 @@ int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int) try {
     ::freopen_s(fpp.get(), "CONOUT$", "w", stdout);
     std::atexit([]() { ::FreeConsole(); });
     auto form = mado::make<mado::form>();
-    form->set_on_create_handler([](mado::form&) {
+    form->on_create([](mado::form&) {
         MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OK);
         ::OutputDebugString(_T("should create"));
     });
-    form->set_should_close_handler(
+    form->should_close(
         [](mado::form&) { return MessageBox(nullptr, _T("hoge"), _T("hoge"), MB_OKCANCEL) == IDOK; });
     form->create();
     auto button = mado::make<mado::button>(form->hwnd(), _T("buttonやで"));
-    button->set_on_create_handler([](mado::button&) { MessageBox(nullptr, _T("bar"), _T("bar"), MB_OK); });
+    button->on_create([](mado::button&) { MessageBox(nullptr, _T("bar"), _T("bar"), MB_OK); });
     button->create();
-    button->set_on_click_handler(
+    button->on_click(
         [](mado::button&, std::pair<short, short>) { MessageBox(nullptr, _T("clicked"), _T("button"), MB_OK); });
     form->title(_T("foo"));
     form->show();

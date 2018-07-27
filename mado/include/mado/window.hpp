@@ -150,29 +150,29 @@ namespace mado {
 
         void title(tstring_view title) {
             if (!created_) {
-                property_.title = title.data();
+                property_.title = title;
                 return;
             }
             ::SetWindowText(hwnd_, title.data());
         }
 
-        void set_should_create_handler(should_create_handler_type const& handler) {
+        void should_create(should_create_handler_type const& handler) {
             should_create_handler_ = handler;
         }
 
-        void set_should_close_handler(should_close_handler_type const& handler) {
+        void should_close(should_close_handler_type const& handler) {
             should_close_handler_ = handler;
         }
 
-        void set_on_create_handler(on_create_handler_type const& handler) {
+        void on_create(on_create_handler_type const& handler) {
             on_create_handler_ = handler;
         }
 
-        void set_on_close_handler(on_create_handler_type const& handler) {
+        void on_close(on_close_handler_type const& handler) {
             on_close_handler_ = handler;
         }
 
-        void set_on_click_handler(on_click_handler_type const& handler) {
+        void on_click(on_click_handler_type const& handler) {
             on_click_handler_ = handler;
         }
 
