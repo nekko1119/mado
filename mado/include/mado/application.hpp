@@ -15,11 +15,11 @@ namespace mado {
             ::MSG msg;
             while (true) {
                 auto const state = ::GetMessage(&msg, nullptr, 0U, 0U);
-                // WM_QUIT が呼ばれた
+                // called WM_QUIT
                 if (state == 0) {
                     return;
                 }
-                // 何かエラーが起きた
+                // some error occured
                 if (state == -1) {
                     throw std::system_error{make_error_code()};
                 }
