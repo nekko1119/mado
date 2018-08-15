@@ -19,12 +19,12 @@ namespace mado {
         }
         property_.create_params = this;
         hwnd_ = property_.create();
-        window_procedure_ = reinterpret_cast<window::procedure_type>(::GetWindowLongPtr(hwnd_, GWL_WNDPROC));
+        window_procedure_ = reinterpret_cast<window::procedure_type>(::GetWindowLongPtr(hwnd_, GWLP_WNDPROC));
         if (!window_procedure_) {
             throw std::system_error{make_error_code()};
         }
         ::SetWindowLongPtr(hwnd_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-        ::SetWindowLongPtr(hwnd_, GWL_WNDPROC, reinterpret_cast<LONG_PTR>(&window::window_procedure));
+        ::SetWindowLongPtr(hwnd_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&window::window_procedure));
         // test code
         ::SendMessage(hwnd_, WM_SETFONT, (LPARAM)::GetStockObject(DEFAULT_GUI_FONT), true);
     }
