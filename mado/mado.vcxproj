@@ -40,7 +40,7 @@
     <ProjectGuid>{178FF189-8880-4836-8DA3-1624F1FF0BF0}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>mado</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
